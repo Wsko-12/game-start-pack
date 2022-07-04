@@ -16,8 +16,9 @@ class Assets {
     }
     load() {
         this.textures.load().then(() => {
-            console.log('Texture loaded');
-            console.log(this);
+            this.geometries.load().then(() => {
+                console.log(this);
+            });
         });
     }
 }

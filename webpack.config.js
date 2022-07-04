@@ -46,8 +46,8 @@ const clientConfig = {
         to: path.resolve(__dirname, 'dist/client/assets/textures'),
       },
       {
-        from: path.resolve(__dirname, 'app/client/app/assets/models/src'),
-        to: path.resolve(__dirname, 'dist/client/assets/models'),
+        from: path.resolve(__dirname, 'app/client/app/assets/geometries/src'),
+        to: path.resolve(__dirname, 'dist/client/assets/geometries'),
       }
     ]
     }),

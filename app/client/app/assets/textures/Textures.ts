@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { TextureAtlasItem } from '../../../../interface/interface';
+import { AtlasItem } from '../../../../interface/interface';
 import { textureAtlas } from './atlas';
 class Textures {
     private _loaded: { [key: string]: THREE.Texture };
@@ -12,7 +12,7 @@ class Textures {
             let index = 0;
             const load = () => {
                 if (textureAtlas[index]) {
-                    const data: TextureAtlasItem = textureAtlas[index];
+                    const data: AtlasItem = textureAtlas[index];
                     const path: string = './assets/textures/' + data.folder + '/' + data.file;
                     loader.load(path, (texture) => {
                         texture.flipY = false;

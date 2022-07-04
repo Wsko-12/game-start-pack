@@ -1,6 +1,6 @@
-import { TextureAtlasItem } from '../../../../interface/interface';
+import { AtlasItem } from '../../../../interface/interface';
 
-const textureAtlas: TextureAtlasItem[] = [
+const textureAtlas: AtlasItem[] = [
     {
         name: 'test',
         folder: '',
