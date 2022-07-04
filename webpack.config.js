@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 
 const base = {
@@ -38,10 +39,23 @@ const clientConfig = {
     path: path.resolve(__dirname, 'dist/client'),
     filename: 'index[hash].js',
   },
-  plugins: [
-    new CleanWebpackPlugin(), 
+  plugins: [ 
+    new CopyPlugin({
+      patterns:[{
+        from: path.resolve(__dirname, 'app/client/app/assets/textures/src'),
+        to: path.resolve(__dirname, 'dist/client/assets/textures'),
+      },
+      {
+        from: path.resolve(__dirname, 'app/client/app/assets/models/src'),
+        to: path.resolve(__dirname, 'dist/client/assets/models'),
+      }
+    ]
+    }),
     new HtmlWebpackPlugin({
       template: 'app/client/index.html'
+    }),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns:["**/*","!assets"],
     }),
   ],
   ...base,
