@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { AtlasItem } from '../../../../interface/interface';
 import { geometriesAtlas } from './atlas';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import LoadingProgress from '../../view/loadingProgress/LoadingProgress';
 class Geometries {
     private static _instance: Geometries;
     public static get i() {
@@ -14,7 +15,8 @@ class Geometries {
         return Geometries._instance;
     }
 
-    load(): Promise<boolean> {
+    load(loading: LoadingProgress): Promise<boolean> {
+        loading.start(geometriesAtlas.length);
         return new Promise((res) => {
             const loader = new GLTFLoader();
             let index = 0;
@@ -26,6 +28,7 @@ class Geometries {
                         const mesh = model.scene.children[0] as THREE.Mesh;
                         this._loaded[data.name] = mesh.geometry;
                         index++;
+                        loading.tick(index);
                         load();
                     });
                 } else {

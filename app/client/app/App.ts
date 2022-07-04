@@ -20,7 +20,7 @@ class App {
         if (this._started) return;
         this._started = true;
         this.assets.load(() => {
-            console.log('Assets loaded');
+            console.log('[Assets] ', this.assets);
         });
     }
 }

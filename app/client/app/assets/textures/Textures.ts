@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { AtlasItem } from '../../../../interface/interface';
+import LoadingProgress from '../../view/loadingProgress/LoadingProgress';
 import { textureAtlas } from './atlas';
 class Textures {
     private static _instance: Textures;
@@ -12,7 +13,8 @@ class Textures {
         if (!Textures._instance) Textures._instance = this;
         return Textures._instance;
     }
-    load(): Promise<boolean> {
+    load(loading: LoadingProgress): Promise<boolean> {
+        loading.start(textureAtlas.length);
         return new Promise((res) => {
             const loader = new THREE.TextureLoader();
             let index = 0;
@@ -24,6 +26,7 @@ class Textures {
                         texture.flipY = false;
                         this._loaded[data.name] = texture;
                         index++;
+                        loading.tick(index);
                         load();
                     });
                 } else {

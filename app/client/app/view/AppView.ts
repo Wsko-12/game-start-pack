@@ -1,4 +1,3 @@
-import App from '../App';
 import LoadingProgress from './loadingProgress/LoadingProgress';
 
 interface createElementProps {
@@ -9,15 +8,17 @@ interface createElementProps {
 
 class AppView {
     private static _instance: AppView;
-    public loadingProgress: LoadingProgress = new LoadingProgress();
     public static get i() {
         return this._instance;
     }
+
+    public loadingProgress: LoadingProgress = new LoadingProgress();
+
     constructor() {
         if (AppView._instance) return AppView._instance;
         AppView._instance = this;
     }
-    createElement(properties: createElementProps): HTMLElement {
+    public createElement(properties: createElementProps): HTMLElement {
         const element = document.createElement(properties.element) as HTMLElement;
         if (properties.classes) {
             if (typeof properties.classes === 'string') {
