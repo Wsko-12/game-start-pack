@@ -1,3 +1,4 @@
+import App from '../App';
 import Geometries from './geometries/Geometries';
 import Textures from './textures/Textures';
 
@@ -6,19 +7,16 @@ class Assets {
     public static get i() {
         return this._instance;
     }
-    textures: Textures;
-    geometries: Geometries;
+
+    textures: Textures = new Textures();
+    geometries: Geometries = new Geometries();
     constructor() {
-        this.textures = new Textures();
-        this.geometries = new Geometries();
         if (!Assets._instance) Assets._instance = this;
         return Assets._instance;
     }
-    load() {
+    load(callback: () => void) {
         this.textures.load().then(() => {
-            this.geometries.load().then(() => {
-                console.log(this);
-            });
+            this.geometries.load().then(callback);
         });
     }
 }

@@ -2,9 +2,15 @@ import * as THREE from 'three';
 import { AtlasItem } from '../../../../interface/interface';
 import { textureAtlas } from './atlas';
 class Textures {
-    private _loaded: { [key: string]: THREE.Texture };
+    private static _instance: Textures;
+    public static get i() {
+        return this._instance;
+    }
+
+    private _loaded: { [key: string]: THREE.Texture } = {};
     constructor() {
-        this._loaded = {};
+        if (!Textures._instance) Textures._instance = this;
+        return Textures._instance;
     }
     load(): Promise<boolean> {
         return new Promise((res) => {

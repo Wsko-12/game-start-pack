@@ -1,4 +1,5 @@
 import App from '../App';
+import LoadingProgress from './loadingProgress/LoadingProgress';
 
 interface createElementProps {
     element: 'div' | 'span' | 'button';
@@ -8,6 +9,7 @@ interface createElementProps {
 
 class AppView {
     private static _instance: AppView;
+    public loadingProgress: LoadingProgress = new LoadingProgress();
     public static get i() {
         return this._instance;
     }

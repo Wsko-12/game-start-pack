@@ -2,11 +2,18 @@ import * as THREE from 'three';
 import { AtlasItem } from '../../../../interface/interface';
 import { geometriesAtlas } from './atlas';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-class Textures {
-    private _loaded: { [key: string]: THREE.BufferGeometry };
-    constructor() {
-        this._loaded = {};
+class Geometries {
+    private static _instance: Geometries;
+    public static get i() {
+        return this._instance;
     }
+
+    private _loaded: { [key: string]: THREE.BufferGeometry } = {};
+    constructor() {
+        if (!Geometries._instance) Geometries._instance = this;
+        return Geometries._instance;
+    }
+
     load(): Promise<boolean> {
         return new Promise((res) => {
             const loader = new GLTFLoader();
@@ -29,4 +36,4 @@ class Textures {
         });
     }
 }
-export default Textures;
+export default Geometries;

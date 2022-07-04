@@ -3,16 +3,15 @@ import AppView from './view/AppView';
 
 class App {
     private static _instance: App;
-    public assets: Assets;
     public static get i() {
         return this._instance;
     }
-    public view: AppView;
-    private _started: boolean;
+
+    public assets: Assets = new Assets();
+    public view: AppView = new AppView();
+    private _started = false;
+
     constructor() {
-        this.view = new AppView();
-        this.assets = new Assets();
-        this._started = false;
         if (App._instance) return App._instance;
         App._instance = this;
         return App._instance;
@@ -20,7 +19,9 @@ class App {
     start() {
         if (this._started) return;
         this._started = true;
-        this.assets.load();
+        this.assets.load(() => {
+            console.log('Assets loaded');
+        });
     }
 }
 
