@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
@@ -37,7 +38,12 @@ const clientConfig = {
     path: path.resolve(__dirname, 'dist/client'),
     filename: 'index[hash].js',
   },
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(), 
+    new HtmlWebpackPlugin({
+      template: 'app/client/index.html'
+    }),
+  ],
   ...base,
 };
 
