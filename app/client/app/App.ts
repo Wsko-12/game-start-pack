@@ -1,13 +1,12 @@
-import Assets from './assets/Assets';
+import Game from './game/Game';
 import AppView from './view/AppView';
-
+import './common.scss';
 class App {
     private static _instance: App;
+    private _game: Game = new Game();
     public static get i() {
         return this._instance;
     }
-
-    public assets: Assets = new Assets();
     public view: AppView = new AppView();
     private _started = false;
 
@@ -19,9 +18,7 @@ class App {
     start() {
         if (this._started) return;
         this._started = true;
-        this.assets.load(() => {
-            console.log('[Assets] ', this.assets);
-        });
+        this._game.start();
     }
 }
 

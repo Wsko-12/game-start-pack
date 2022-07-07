@@ -19,13 +19,11 @@ const base = {
             use: [
               "style-loader",
               "css-loader",
+              'sass-loader',
               {
-                loader: "sass-loader",
+                loader: 'sass-resources-loader',
                 options: {
-                  implementation: require("sass"),
-                  sassOptions: {
-                    fiber: false,
-                  },
+                  resources: ['./app/client/app/mixins.scss']
                 },
               },
             ],

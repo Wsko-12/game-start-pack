@@ -17,24 +17,21 @@ class LoadingProgress {
     }
 
     private createElement() {
-        const element = AppView.i.createElement({
-            element: 'div',
+        const builder = new AppView().createElement;
+        const element = builder('div', {
             id: 'loadingScreen',
         });
-        const overlay = AppView.i.createElement({
-            element: 'div',
+        const overlay = builder('div', {
             classes: 'loading__overlay',
         });
         element.append(overlay);
 
-        const progressContainer = AppView.i.createElement({
-            element: 'div',
+        const progressContainer = builder('div', {
             classes: 'loading__progress-container',
         });
         overlay.append(progressContainer);
 
-        const progressBar = AppView.i.createElement({
-            element: 'div',
+        const progressBar = builder('div', {
             classes: 'loading__progress',
         });
         progressContainer.append(progressBar);
