@@ -2,6 +2,21 @@ import MainCamera from '../MainCamera';
 
 export default class CameraEventsHandler {
     private _camera: MainCamera;
+    private _mouse = {
+        x: 0,
+        y: 0,
+        clicked: false,
+        context: false,
+    };
+
+    private _touch = {
+        x: 0,
+        y: 0,
+        clicked: false,
+    };
+
+    private contextmenu: (e: MouseEvent) => boolean;
+    private wheel: (e: WheelEvent) => void;
 
     private mouseDown: (e: MouseEvent) => void;
     private mouseMove: (e: MouseEvent) => void;
@@ -14,28 +29,39 @@ export default class CameraEventsHandler {
     constructor(mainCamera: MainCamera) {
         this._camera = mainCamera;
 
+        this.contextmenu = (e: MouseEvent): boolean => {
+            e.preventDefault();
+            return false;
+        };
+        this.wheel = (e: WheelEvent): void => {
+            e.preventDefault();
+        };
+
         this.mouseDown = (e: MouseEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
         this.mouseMove = (e: MouseEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
         this.mouseUp = (e: MouseEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
 
         this.touchStart = (e: TouchEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
         this.touchMove = (e: TouchEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
         this.touchEnd = (e: TouchEvent): void => {
-            console.log(e);
+            e.preventDefault();
         };
     }
 
     attach(element: HTMLElement): void {
+        element.addEventListener('contextmenu', this.contextmenu);
+        element.addEventListener('wheel', this.wheel);
+
         element.addEventListener('mousedown', this.mouseDown);
         element.addEventListener('mousemove', this.mouseMove);
         element.addEventListener('mouseup', this.mouseUp);
@@ -46,6 +72,9 @@ export default class CameraEventsHandler {
     }
 
     detach(element: HTMLElement): void {
+        element.removeEventListener('contextmenu', this.contextmenu);
+        element.removeEventListener('wheel', this.wheel);
+
         element.removeEventListener('mousedown', this.mouseDown);
         element.removeEventListener('mousemove', this.mouseMove);
         element.removeEventListener('mouseup', this.mouseUp);
