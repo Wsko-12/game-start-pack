@@ -1,4 +1,5 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import Stats from 'three/examples/jsm/libs/stats.module';
 import AppView from '../../view/AppView';
 import './style.scss';
 export default class Renderer {
@@ -8,6 +9,7 @@ export default class Renderer {
     private _camera: PerspectiveCamera | null = null;
     private _scene: Scene | null = null;
     private _stopped = false;
+    private _stats: Stats = Stats();
     constructor() {
         this._canvas = new AppView().createElement('canvas', {
             id: 'renderer',
@@ -46,12 +48,18 @@ export default class Renderer {
         return this._canvas;
     }
 
-    private render() {
+    public render = () => {
+        this._stats.update();
         if (!this._stopped && this._scene && this._camera) {
             this._renderer.render(this._scene, this._camera);
-            requestAnimationFrame(() => {
-                this.render();
-            });
+        }
+    };
+
+    public statsSwitcher(turnOn: boolean) {
+        if (turnOn) {
+            document.body.appendChild(this._stats.dom);
+        } else {
+            this._stats.dom.remove();
         }
     }
 
