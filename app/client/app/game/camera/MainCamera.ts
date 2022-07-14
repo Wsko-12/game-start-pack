@@ -1,34 +1,12 @@
-import { PerspectiveCamera } from 'three';
-import CameraEventsHandler from './eventsHandler/CameraEventsHandler';
+import GameCamera from './GameCamera';
 
-export default class MainCamera {
+export default class MainCamera extends GameCamera {
     private static _instance: MainCamera;
-    private _camera: PerspectiveCamera = new PerspectiveCamera();
-    private _eventsHandlerElement: HTMLElement | undefined;
-    private _eventsHandler: CameraEventsHandler = new CameraEventsHandler(this);
     constructor() {
-        if (!MainCamera._instance) MainCamera._instance = this;
-    }
-
-    public getThreeCamera(): PerspectiveCamera {
-        return this._camera;
-    }
-
-    public setMouseEventsHandler(element: HTMLElement) {
-        if (this._eventsHandlerElement) this.detachEvents();
-        this._eventsHandlerElement = element;
-        this.attachEvents();
-    }
-
-    private detachEvents(): void {
-        if (this._eventsHandlerElement) {
-            this._eventsHandler.detach(this._eventsHandlerElement);
+        super();
+        if (!MainCamera._instance) {
+            MainCamera._instance = this;
         }
-    }
-
-    private attachEvents(): void {
-        if (this._eventsHandlerElement) {
-            this._eventsHandler.attach(this._eventsHandlerElement);
-        }
+        return MainCamera._instance;
     }
 }

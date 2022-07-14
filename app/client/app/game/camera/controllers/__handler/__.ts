@@ -1,7 +1,7 @@
-import MainCamera from '../MainCamera';
+import CameraController from '../CameraController';
 
 export default class CameraEventsHandler {
-    private _camera: MainCamera;
+    private _controller: CameraController;
     private _mouse = {
         x: 0,
         y: 0,
@@ -26,8 +26,8 @@ export default class CameraEventsHandler {
     private touchMove: (e: TouchEvent) => void;
     private touchEnd: (e: TouchEvent) => void;
 
-    constructor(mainCamera: MainCamera) {
-        this._camera = mainCamera;
+    constructor(controller: CameraController) {
+        this._controller = controller;
 
         this.contextmenu = (e: MouseEvent): boolean => {
             e.preventDefault();
