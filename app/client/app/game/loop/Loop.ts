@@ -20,6 +20,10 @@ export default class Loop {
     }
 
     public setFps(fps: number) {
+        if (fps === 0) {
+            this.switcher(false);
+            return;
+        }
         this._oneFrameTime = 1 / fps;
         this._fps = fps;
     }
@@ -40,7 +44,7 @@ export default class Loop {
     }
 
     public switcher(turnOn: boolean) {
-        this._paused = turnOn;
+        this._paused = !turnOn;
     }
 
     public addCallback(callback: callback) {

@@ -27,15 +27,25 @@ export default class Game {
     start() {
         this._assets.load(() => {
             this.appendCanvas();
-
-            this._mainRenderer.setScene(this._mainScene.getThreeScene());
-            this._mainRenderer.setCamera(this._mainCamera.getThreeCamera());
-
             this._clock.start();
 
-            this.loop();
-
+            this.setUpRenderer();
+            this.setUpMainCamera();
             this.setDevFunctions();
+
+            this.loop();
+        });
+    }
+
+    private setUpRenderer() {
+        this._mainRenderer.setScene(this._mainScene.getThreeScene());
+        this._mainRenderer.setCamera(this._mainCamera.getThreeCamera());
+    }
+
+    private setUpMainCamera() {
+        this._mainCamera.setController('orbit');
+        this._loops.animationLoop.addCallback(() => {
+            this._mainCamera.update();
         });
     }
 
@@ -68,13 +78,13 @@ export default class Game {
                 if (!value) this.loop();
             },
             pauseRender: (value: boolean) => {
-                this._loops.renderLoop.switcher(value);
+                this._loops.renderLoop.switcher(!value);
             },
             pauseAnimation: (value: boolean) => {
-                this._loops.animationLoop.switcher(value);
+                this._loops.animationLoop.switcher(!value);
             },
             pauseTick: (value: boolean) => {
-                this._loops.tickLoop.switcher(value);
+                this._loops.tickLoop.switcher(!value);
             },
             setRenderFPS: (fps: number) => {
                 this._loops.renderLoop.setFps(fps);
