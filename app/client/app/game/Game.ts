@@ -11,9 +11,12 @@ export default class Game {
     private _mainScene: MainScene = new MainScene();
     private _mainCamera: MainCamera = new MainCamera();
     private _clock: Clock = new Clock();
-    private _renderLoop: Loop = new Loop(60, this._mainRenderer.render, true);
-    private _animationLoop: Loop = new Loop(30, undefined, true);
-    private _tickLoop: Loop = new Loop(1, undefined, true);
+    private _loops = {
+        paused: false,
+        renderLoop: new Loop(60, this._mainRenderer.render, true),
+        animationLoop: new Loop(30, undefined, true),
+        tickLoop: new Loop(1, undefined, true),
+    };
 
     private static _instance: Game;
     constructor() {
@@ -31,6 +34,8 @@ export default class Game {
             this._clock.start();
 
             this.loop();
+
+            this.setDevFunctions();
         });
     }
 
@@ -43,9 +48,43 @@ export default class Game {
 
     private loop = () => {
         const delta = this._clock.getDelta();
-        this._renderLoop.play(delta);
-        this._animationLoop.play(delta);
-        this._tickLoop.play(delta);
-        requestAnimationFrame(this.loop);
+        const { renderLoop, animationLoop, tickLoop } = this._loops;
+        renderLoop.play(delta);
+        animationLoop.play(delta);
+        tickLoop.play(delta);
+        if (!this._loops.paused) {
+            requestAnimationFrame(this.loop);
+        }
     };
+
+    private setDevFunctions() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).$dev = {
+            showStats: (value: boolean) => {
+                this._mainRenderer.statsSwitcher(value);
+            },
+            pauseAllLoops: (value: boolean) => {
+                this._loops.paused = value;
+                if (!value) this.loop();
+            },
+            pauseRender: (value: boolean) => {
+                this._loops.renderLoop.switcher(value);
+            },
+            pauseAnimation: (value: boolean) => {
+                this._loops.animationLoop.switcher(value);
+            },
+            pauseTick: (value: boolean) => {
+                this._loops.tickLoop.switcher(value);
+            },
+            setRenderFPS: (fps: number) => {
+                this._loops.renderLoop.setFps(fps);
+            },
+            setAnimationFPS: (fps: number) => {
+                this._loops.animationLoop.setFps(fps);
+            },
+            setTickFPS: (fps: number) => {
+                this._loops.tickLoop.setFps(fps);
+            },
+        };
+    }
 }
