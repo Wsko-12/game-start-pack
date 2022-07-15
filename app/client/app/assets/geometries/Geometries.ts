@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import { AtlasItem } from '../../../../interface/interface';
 import { geometriesAtlas } from './atlas';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import LoadingProgress from '../../view/loadingProgress/LoadingProgress';
+import { AtlasItem } from '../../../../ts/interfaces';
+import LoadingPage from '../../common/LoadingPage/LoadingPage';
+
 class Geometries {
     private static _instance: Geometries;
     public static get i() {
@@ -15,7 +16,7 @@ class Geometries {
         return Geometries._instance;
     }
 
-    load(loading: LoadingProgress): Promise<boolean> {
+    load(loading: LoadingPage): Promise<boolean> {
         loading.start(geometriesAtlas.length);
         return new Promise((res) => {
             const loader = new GLTFLoader();

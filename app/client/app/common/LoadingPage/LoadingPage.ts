@@ -1,45 +1,46 @@
-import AppView from '../AppView';
+import PageBuilder from '../PageBuilder';
 import './style.scss';
 
-class LoadingProgress {
-    private static _instance: LoadingProgress;
+export default class LoadingPage {
+    private static _instance: LoadingPage;
     public static get i() {
         return this._instance;
     }
 
     private _autoClear = true;
     private _max = 0;
-    private _element: HTMLElement | undefined;
+    private _element: HTMLDivElement | undefined;
+    private _progressBar: HTMLDivElement | undefined;
 
     constructor() {
-        if (LoadingProgress._instance) return LoadingProgress._instance;
-        LoadingProgress._instance = this;
+        if (LoadingPage._instance) return LoadingPage._instance;
+        LoadingPage._instance = this;
     }
 
     private createElement() {
-        const builder = new AppView().createElement;
-        const element = builder('div', {
+        const builder = PageBuilder.createElement;
+        const element = <HTMLDivElement>builder('div', {
             id: 'loadingScreen',
         });
-        const overlay = builder('div', {
+        const overlay = <HTMLDivElement>builder('div', {
             classes: 'loading__overlay',
         });
         element.append(overlay);
 
-        const progressContainer = builder('div', {
+        const progressContainer = <HTMLDivElement>builder('div', {
             classes: 'loading__progress-container',
         });
         overlay.append(progressContainer);
 
-        const progressBar = builder('div', {
+        this._progressBar = <HTMLDivElement>builder('div', {
             classes: 'loading__progress',
         });
-        progressContainer.append(progressBar);
+        progressContainer.append(this._progressBar);
 
         return element;
     }
 
-    start(max: number, autoClear = true): LoadingProgress {
+    start(max: number, autoClear = true): LoadingPage {
         this.clear();
         this._autoClear = autoClear;
         this._max = max;
@@ -53,8 +54,9 @@ class LoadingProgress {
             return;
         }
         const process = (currentValue / this._max) * 100;
-        const progressBar = document.querySelector('#loadingScreen .loading__progress') as HTMLElement;
-        progressBar.style.width = process + '%';
+        if (this._progressBar) {
+            this._progressBar.style.width = process + '%';
+        }
     }
 
     clear() {
@@ -62,4 +64,3 @@ class LoadingProgress {
         this._element?.remove();
     }
 }
-export default LoadingProgress;

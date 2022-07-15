@@ -1,75 +1,63 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import Stats from 'three/examples/jsm/libs/stats.module';
-import AppView from '../../view/AppView';
+import PageBuilder from '../../../common/PageBuilder';
 import './style.scss';
-export default class Renderer {
+export default class Render {
     public readonly id: string = Math.random().toString();
     private _canvas: HTMLCanvasElement;
     private _renderer: WebGLRenderer;
     private _camera: PerspectiveCamera | null = null;
     private _scene: Scene | null = null;
-    private _stopped = false;
-    private _stats: Stats = Stats();
     constructor() {
-        this._canvas = new AppView().createElement('canvas', {
+        this._canvas = <HTMLCanvasElement>PageBuilder.createElement('canvas', {
             id: 'renderer',
             classes: 'canvas',
-        }) as HTMLCanvasElement;
+        });
         this._renderer = new WebGLRenderer({
             canvas: this._canvas,
         });
 
-        document.addEventListener('resize', () => {
+        window.addEventListener('resize', () => {
             this.setSize();
         });
     }
-    public setCamera(camera: PerspectiveCamera) {
+
+    public resize(): void {
+        this.setSize();
+    }
+
+    public setCamera(camera: PerspectiveCamera): void {
         this._camera = camera;
     }
 
-    public setCanvas(canvas: HTMLCanvasElement) {
+    public setCanvas(canvas: HTMLCanvasElement): void {
         this._canvas = canvas;
         this._renderer.domElement = this._canvas;
+    }
+
+    public getCanvas(): HTMLCanvasElement {
+        return this._canvas;
     }
 
     public setScene(scene: Scene) {
         this._scene = scene;
     }
 
-    public startRender() {
-        this._stopped = false;
-        this.render();
-    }
-    public stopRender() {
-        this._stopped = true;
-    }
-
-    public getCanvas() {
-        return this._canvas;
-    }
-
-    public render = () => {
-        this._stats.update();
-        if (!this._stopped && this._scene && this._camera) {
+    public render = (): void => {
+        if (this._scene && this._camera) {
             this._renderer.render(this._scene, this._camera);
         }
     };
 
-    public statsSwitcher(turnOn: boolean) {
-        if (turnOn) {
-            document.body.appendChild(this._stats.dom);
-        } else {
-            this._stats.dom.remove();
-        }
-    }
-
-    private setSize() {
+    private setSize(): void {
         const windowPixelRatio = Math.min(window.devicePixelRatio, 2);
         const windowWidth = +window.innerWidth * windowPixelRatio;
         const windowHeight = +window.innerHeight * windowPixelRatio;
 
         this._renderer.setSize(windowWidth, windowHeight, false);
         this._renderer.setPixelRatio(windowPixelRatio);
+
+        this._canvas.style.width = window.innerWidth + 'px';
+        this._canvas.style.height = window.innerHeight + 'px';
 
         if (this._camera) {
             this._camera.aspect = windowWidth / windowHeight;
