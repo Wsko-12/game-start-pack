@@ -24,6 +24,10 @@ export class Point2 {
         }
         return 0;
     }
+
+    getCordsArr(): [number, number] {
+        return [this.x, this.y];
+    }
 }
 
 export class Point3 {
@@ -53,5 +57,9 @@ export class Point3 {
             return this.getDistanceTo(new Point3(0, 0, 0));
         }
         return 0;
+    }
+
+    getCordsArr(): [number, number, number] {
+        return [this.x, this.y, this.z];
     }
 }

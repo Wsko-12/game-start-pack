@@ -3,3 +3,9 @@ export interface AtlasItem {
     folder: string;
     file: string;
 }
+
+export interface IPoint3 {
+    x: number;
+    y: number;
+    z: number;
+}
