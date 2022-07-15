@@ -20,22 +20,38 @@ class AppView {
         if (AppView._instance) return AppView._instance;
         AppView._instance = this;
     }
-    public createElement(tag: string, properties: createElementProps): HTMLElement {
-        const element = document.createElement(tag) as HTMLElement;
+    public static createElement<T extends HTMLElement>(tag = 'div', properties: createElementProps = {}): T {
+        const element = <T>document.createElement(tag);
         if (properties.classes) {
+            let classes: string[];
             if (typeof properties.classes === 'string') {
-                element.classList.add(properties.classes);
+                classes = properties.classes
+                    .replace(/,/g, ' ')
+                    .replace(/\./g, ' ')
+                    .replace(/\s{2,}/g, ' ')
+                    .trim()
+                    .split(' ');
             } else {
-                element.classList.add(...properties.classes);
+                classes = properties.classes.map((item) => {
+                    return item
+                        .replace(/,/g, ' ')
+                        .replace(/\./g, ' ')
+                        .replace(/\s{2,}/g, ' ')
+                        .trim();
+                });
             }
+            element.classList.add(...classes);
         }
         if (properties.id) {
-            element.id = properties.id;
+            element.id = properties.id
+                .replace(/#/g, ' ')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
         }
 
         if (properties.attrs) {
             for (const attr in properties.attrs) {
-                const value: string | number = properties.attrs[attr];
+                const value: string | number | boolean = properties.attrs[attr];
                 element.setAttribute(attr, value.toString());
             }
         }
@@ -50,8 +66,16 @@ class AppView {
         if (properties.content) {
             if (typeof properties.content === 'string') {
                 element.innerHTML = properties.content;
-            } else {
-                element.append(...properties.content);
+            } else if (properties.content instanceof HTMLElement) {
+                element.append(properties.content);
+            } else if (Array.isArray(properties.content)) {
+                properties.content.forEach((item: string | HTMLElement) => {
+                    if (typeof item === 'string') {
+                        element.insertAdjacentHTML('beforeend', item);
+                    } else {
+                        element.append(item);
+                    }
+                });
             }
         }
         return element;

@@ -11,7 +11,7 @@ export default class Renderer {
     private _stopped = false;
     private _stats: Stats = Stats();
     constructor() {
-        this._canvas = new AppView().createElement('canvas', {
+        this._canvas = AppView.createElement('canvas', {
             id: 'renderer',
             classes: 'canvas',
         }) as HTMLCanvasElement;

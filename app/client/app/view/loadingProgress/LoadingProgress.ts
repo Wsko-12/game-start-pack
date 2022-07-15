@@ -9,7 +9,8 @@ class LoadingProgress {
 
     private _autoClear = true;
     private _max = 0;
-    private _element: HTMLElement | undefined;
+    private _element: HTMLDivElement | undefined;
+    private _progressBar: HTMLDivElement | undefined;
 
     constructor() {
         if (LoadingProgress._instance) return LoadingProgress._instance;
@@ -17,24 +18,24 @@ class LoadingProgress {
     }
 
     private createElement() {
-        const builder = new AppView().createElement;
-        const element = builder('div', {
+        const builder = AppView.createElement;
+        const element = <HTMLDivElement>builder('div', {
             id: 'loadingScreen',
         });
-        const overlay = builder('div', {
+        const overlay = <HTMLDivElement>builder('div', {
             classes: 'loading__overlay',
         });
         element.append(overlay);
 
-        const progressContainer = builder('div', {
+        const progressContainer = <HTMLDivElement>builder('div', {
             classes: 'loading__progress-container',
         });
         overlay.append(progressContainer);
 
-        const progressBar = builder('div', {
+        this._progressBar = <HTMLDivElement>builder('div', {
             classes: 'loading__progress',
         });
-        progressContainer.append(progressBar);
+        progressContainer.append(this._progressBar);
 
         return element;
     }
@@ -53,8 +54,9 @@ class LoadingProgress {
             return;
         }
         const process = (currentValue / this._max) * 100;
-        const progressBar = document.querySelector('#loadingScreen .loading__progress') as HTMLElement;
-        progressBar.style.width = process + '%';
+        if (this._progressBar) {
+            this._progressBar.style.width = process + '%';
+        }
     }
 
     clear() {
