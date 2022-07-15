@@ -32,6 +32,8 @@ export default class GameManager {
             this._loops.update.switcher(true);
             this._loops.tick.switcher(true);
             this.loop();
+
+            this._world.createTestWorld();
         });
     }
 

@@ -29,6 +29,7 @@ export default class GameInterface {
     }
 
     public renderLoop = (): void => {
+        this._stats.update();
         this._render.render();
     };
 
@@ -41,6 +42,6 @@ export default class GameInterface {
     }
 
     public updateLoop = (): void => {
-        return;
+        this._camera.update();
     };
 }
