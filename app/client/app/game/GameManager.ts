@@ -12,7 +12,7 @@ export default class GameManager {
         render: new Loop(60, (time) => {
             this._interface.renderLoop(time);
         }),
-        update: new Loop(40, (time) => {
+        update: new Loop(30, (time) => {
             this._interface.updateLoop(time);
             this._world.updateLoop(time);
         }),

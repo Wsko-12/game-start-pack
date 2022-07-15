@@ -1,7 +1,8 @@
 import CameraController from '../CameraController';
+import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
-    private _controller: CameraController;
+    private _controller: OrbitController;
     private _mouse = {
         x: 0,
         y: 0,
@@ -12,8 +13,13 @@ export default class CameraEventsHandler {
     private _touch = {
         x: 0,
         y: 0,
+        x2: 0,
+        y2: 0,
         clicked: false,
+        double: true,
     };
+
+    private _eventHandler: HTMLElement | null = null;
 
     private contextmenu: (e: MouseEvent) => boolean;
     private wheel: (e: WheelEvent) => void;
@@ -26,7 +32,7 @@ export default class CameraEventsHandler {
     private touchMove: (e: TouchEvent) => void;
     private touchEnd: (e: TouchEvent) => void;
 
-    constructor(controller: CameraController) {
+    constructor(controller: OrbitController) {
         this._controller = controller;
 
         this.contextmenu = (e: MouseEvent): boolean => {
@@ -34,6 +40,58 @@ export default class CameraEventsHandler {
             return false;
         };
         this.wheel = (e: WheelEvent): void => {
+            /*
+                deltaY = -100 zoom in
+                deltaY = 100 zoom out
+
+                deltaY int + move target back
+                deltaY int - move target front
+
+                deltaY float + zoom out
+                deltaY float - zoom in
+
+
+                deltaX int + move target right
+                deltaX int - move target left
+            */
+            const { deltaX, deltaY } = e;
+
+            if (deltaY !== 0) {
+                if (deltaY % 1 === 0) {
+                    if (deltaY === 100 || deltaY === -100) {
+                        if (deltaY > 0) {
+                            console.log('zoom out');
+                        } else {
+                            console.log('zoom in');
+                        }
+                    } else {
+                        if (deltaY > 0) {
+                            this._controller.targetDirection.front += Math.abs(e.deltaY);
+                            // console.log('move target front', e.deltaY);
+                        } else {
+                            this._controller.targetDirection.front -= Math.abs(e.deltaY);
+                            // console.log('move target back', e.deltaY);
+                        }
+                    }
+                } else {
+                    //pitch
+                    if (deltaY > 0) {
+                        console.log('zoom out', e.deltaY);
+                    } else {
+                        console.log('zoom in', e.deltaY);
+                    }
+                }
+            }
+
+            if (deltaX !== 0) {
+                if (deltaX > 0) {
+                    this._controller.targetDirection.left += Math.abs(e.deltaX);
+                    // console.log('target right');
+                } else {
+                    this._controller.targetDirection.left -= Math.abs(e.deltaX);
+                    // console.log('target left');
+                }
+            }
             e.preventDefault();
         };
 
@@ -59,28 +117,31 @@ export default class CameraEventsHandler {
     }
 
     attach(element: HTMLElement): void {
-        element.addEventListener('contextmenu', this.contextmenu);
-        element.addEventListener('wheel', this.wheel);
+        this._eventHandler = element;
+        this._eventHandler.addEventListener('contextmenu', this.contextmenu);
+        this._eventHandler.addEventListener('wheel', this.wheel);
 
-        element.addEventListener('mousedown', this.mouseDown);
-        element.addEventListener('mousemove', this.mouseMove);
-        element.addEventListener('mouseup', this.mouseUp);
+        this._eventHandler.addEventListener('mousedown', this.mouseDown);
+        this._eventHandler.addEventListener('mousemove', this.mouseMove);
+        this._eventHandler.addEventListener('mouseup', this.mouseUp);
 
-        element.addEventListener('touchmove', this.touchMove);
-        element.addEventListener('touchstart', this.touchStart);
-        element.addEventListener('touchend', this.touchEnd);
+        this._eventHandler.addEventListener('touchmove', this.touchMove);
+        this._eventHandler.addEventListener('touchstart', this.touchStart);
+        this._eventHandler.addEventListener('touchend', this.touchEnd);
     }
 
-    detach(element: HTMLElement): void {
-        element.removeEventListener('contextmenu', this.contextmenu);
-        element.removeEventListener('wheel', this.wheel);
+    detach(): void {
+        if (this._eventHandler) {
+            this._eventHandler.removeEventListener('contextmenu', this.contextmenu);
+            this._eventHandler.removeEventListener('wheel', this.wheel);
 
-        element.removeEventListener('mousedown', this.mouseDown);
-        element.removeEventListener('mousemove', this.mouseMove);
-        element.removeEventListener('mouseup', this.mouseUp);
+            this._eventHandler.removeEventListener('mousedown', this.mouseDown);
+            this._eventHandler.removeEventListener('mousemove', this.mouseMove);
+            this._eventHandler.removeEventListener('mouseup', this.mouseUp);
 
-        element.removeEventListener('touchmove', this.touchMove);
-        element.removeEventListener('touchstart', this.touchStart);
-        element.removeEventListener('touchend', this.touchEnd);
+            this._eventHandler.removeEventListener('touchmove', this.touchMove);
+            this._eventHandler.removeEventListener('touchstart', this.touchStart);
+            this._eventHandler.removeEventListener('touchend', this.touchEnd);
+        }
     }
 }

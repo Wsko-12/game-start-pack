@@ -12,7 +12,11 @@ export default class GameInterface {
 
     constructor() {
         this._render.setCamera(this._camera.getThreeCamera());
-        this._view.appendCanvas(this._render.getCanvas());
+        this._camera.setController('orbit');
+
+        const canvas = this._render.getCanvas();
+        this._camera.setEventHandler(canvas);
+        this._view.appendCanvas(canvas);
     }
 
     public setRenderScene(scene: Scene): void {
