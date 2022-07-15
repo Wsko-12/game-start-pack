@@ -18,11 +18,11 @@ export default class World {
         return this._mainScene.getThreeScene();
     }
 
-    public updateLoop = (): void => {
+    public updateLoop = (time: number): void => {
         return;
     };
 
-    public tickLoop = (): void => {
+    public tickLoop = (time: number): void => {
         return;
     };
 }

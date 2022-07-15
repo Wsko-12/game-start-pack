@@ -1,4 +1,4 @@
-type callback = () => void;
+type callback = (time: number) => void;
 
 export default class Loop {
     private _fps: number;
@@ -60,7 +60,7 @@ export default class Loop {
 
     private call() {
         this._callbacks.forEach((callback) => {
-            callback();
+            callback(this._frame / this._fps);
         });
     }
 }

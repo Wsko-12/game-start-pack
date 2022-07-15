@@ -21,7 +21,11 @@ export default class GameCamera {
         }
     }
 
-    public update() {
+    public update(time: number) {
+        this._camera.position.x = Math.sin(time) * 10;
+        this._camera.position.z = Math.cos(time);
+        this._camera.lookAt(0, 0, 0);
+
         if (this._controller) this._controller.update();
     }
 }

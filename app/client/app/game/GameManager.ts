@@ -9,15 +9,15 @@ export default class GameManager {
     private _clock = new Clock();
     private _loops = {
         paused: false,
-        render: new Loop(60, () => {
-            this._interface.renderLoop();
+        render: new Loop(60, (time) => {
+            this._interface.renderLoop(time);
         }),
-        update: new Loop(40, () => {
-            this._interface.updateLoop();
-            this._world.updateLoop();
+        update: new Loop(40, (time) => {
+            this._interface.updateLoop(time);
+            this._world.updateLoop(time);
         }),
-        tick: new Loop(1, () => {
-            this._world.tickLoop();
+        tick: new Loop(1, (time) => {
+            this._world.tickLoop(time);
         }),
     };
 
