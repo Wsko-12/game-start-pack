@@ -1,5 +1,3 @@
-import LoadingProgress from './loadingProgress/LoadingProgress';
-
 interface createElementProps {
     classes?: string[] | string | null;
     id?: string | null;
@@ -8,18 +6,7 @@ interface createElementProps {
     content?: string | HTMLElement[];
 }
 
-class AppView {
-    private static _instance: AppView;
-    public static get i() {
-        return this._instance;
-    }
-
-    public loadingProgress: LoadingProgress = new LoadingProgress();
-
-    constructor() {
-        if (AppView._instance) return AppView._instance;
-        AppView._instance = this;
-    }
+export default class PageBuilder {
     public static createElement<T extends HTMLElement>(tag = 'div', properties: createElementProps = {}): T {
         const element = <T>document.createElement(tag);
         if (properties.classes) {
@@ -81,5 +68,3 @@ class AppView {
         return element;
     }
 }
-
-export default AppView;

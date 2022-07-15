@@ -1,8 +1,8 @@
-import AppView from '../AppView';
+import PageBuilder from '../PageBuilder';
 import './style.scss';
 
-class LoadingProgress {
-    private static _instance: LoadingProgress;
+export default class LoadingPage {
+    private static _instance: LoadingPage;
     public static get i() {
         return this._instance;
     }
@@ -13,12 +13,12 @@ class LoadingProgress {
     private _progressBar: HTMLDivElement | undefined;
 
     constructor() {
-        if (LoadingProgress._instance) return LoadingProgress._instance;
-        LoadingProgress._instance = this;
+        if (LoadingPage._instance) return LoadingPage._instance;
+        LoadingPage._instance = this;
     }
 
     private createElement() {
-        const builder = AppView.createElement;
+        const builder = PageBuilder.createElement;
         const element = <HTMLDivElement>builder('div', {
             id: 'loadingScreen',
         });
@@ -40,7 +40,7 @@ class LoadingProgress {
         return element;
     }
 
-    start(max: number, autoClear = true): LoadingProgress {
+    start(max: number, autoClear = true): LoadingPage {
         this.clear();
         this._autoClear = autoClear;
         this._max = max;
@@ -64,4 +64,3 @@ class LoadingProgress {
         this._element?.remove();
     }
 }
-export default LoadingProgress;

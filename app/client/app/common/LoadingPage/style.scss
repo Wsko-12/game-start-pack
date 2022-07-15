@@ -6,6 +6,8 @@ $progress-color: #ffffff;
     height: 100vh;
     background-color: $overlay-color;
     display: flex;
+    z-index: 9999;
+    position: fixed;
 }
 .loading__progress-container{
     margin: auto;

@@ -1,4 +1,4 @@
-import AppView from '../view/AppView';
+import LoadingPage from '../common/LoadingPage/LoadingPage';
 import Geometries from './geometries/Geometries';
 import Textures from './textures/Textures';
 
@@ -15,7 +15,7 @@ class Assets {
         return Assets._instance;
     }
     load(callback: () => void) {
-        const loadingProgress = AppView.i.loadingProgress;
+        const loadingProgress = new LoadingPage();
         this.textures.load(loadingProgress).then(() => {
             this.geometries.load(loadingProgress).then(callback);
         });

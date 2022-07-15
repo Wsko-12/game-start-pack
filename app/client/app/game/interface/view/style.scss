@@ -1,0 +1,15 @@
+.game-screen{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 0;
+
+    &__canvas-container{
+        position: fixed;
+        z-index: 1;
+    }
+    &__interface-container{
+        position: fixed;
+        z-index: 2;
+    }
+}
