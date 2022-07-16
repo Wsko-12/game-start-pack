@@ -15,6 +15,10 @@ export default class OrbitController extends CameraController {
 
         deltaAlpha: 0,
         deltaTetha: 0,
+        blockTetha: {
+            min: (Math.PI / 180) * 10,
+            max: Math.PI / 2 - (Math.PI / 180) * 10,
+        },
     };
     public zoom = {
         value: 1,
@@ -24,21 +28,13 @@ export default class OrbitController extends CameraController {
     };
 
     private _blockRect = {
-        x: -0.5,
-        y: -0.5,
-        width: 1,
-        height: 1,
-    };
-
-    private _blockHeightAngles = {
-        min: (Math.PI / 180) * 10,
-        max: Math.PI / 2 - (Math.PI / 180) * 10,
+        x: -10,
+        y: -10,
+        width: 20,
+        height: 20,
     };
 
     private _camera: PerspectiveCamera;
-
-    public rotationAngel = 0;
-    public heightAngle = 0;
 
     public speed = 1;
     private _smooth = 0.85;
@@ -108,12 +104,12 @@ export default class OrbitController extends CameraController {
     private rotateCamera(unit: number): void {
         this.cameraAngles.alpha += this.cameraAngles.deltaAlpha;
         this.cameraAngles.tetha += this.cameraAngles.deltaTetha;
-        if (this.cameraAngles.tetha < this._blockHeightAngles.min) {
-            this.cameraAngles.tetha = this._blockHeightAngles.min;
+        if (this.cameraAngles.tetha < this.cameraAngles.blockTetha.min) {
+            this.cameraAngles.tetha = this.cameraAngles.blockTetha.min;
             this.cameraAngles.deltaTetha = 0;
         }
-        if (this.cameraAngles.tetha > this._blockHeightAngles.max) {
-            this.cameraAngles.tetha = this._blockHeightAngles.max;
+        if (this.cameraAngles.tetha > this.cameraAngles.blockTetha.max) {
+            this.cameraAngles.tetha = this.cameraAngles.blockTetha.max;
             this.cameraAngles.deltaTetha = 0;
         }
 
@@ -171,8 +167,8 @@ export default class OrbitController extends CameraController {
     }
 
     public setAnglesBlocks(min: number, max: number): void {
-        this._blockHeightAngles.min = (Math.PI / 180) * min;
-        this._blockHeightAngles.max = Math.PI / 2 - (Math.PI / 180) * max;
+        this.cameraAngles.blockTetha.min = (Math.PI / 180) * min;
+        this.cameraAngles.blockTetha.max = Math.PI / 2 - (Math.PI / 180) * max;
     }
 
     public setZoomBlocks(min: number, max: number): void {
