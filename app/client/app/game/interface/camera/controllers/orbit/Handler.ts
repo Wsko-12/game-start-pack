@@ -78,9 +78,9 @@ export default class CameraEventsHandler {
                 if (deltaY % 1 === 0) {
                     if (deltaY === 100 || deltaY === -100) {
                         if (deltaY > 0) {
-                            this._controller.zoom += 0.5;
+                            this._controller.zoom.delta += 0.1 * this._controller.speed;
                         } else {
-                            this._controller.zoom -= 0.5;
+                            this._controller.zoom.delta -= 0.1 * this._controller.speed;
                         }
                     } else {
                         if (deltaY > 0) {
@@ -94,9 +94,9 @@ export default class CameraEventsHandler {
                 } else {
                     //pitch
                     if (deltaY > 0) {
-                        this._controller.zoom += 0.1;
+                        this._controller.zoom.delta += 0.01 * this._controller.speed;
                     } else {
-                        this._controller.zoom -= 0.1;
+                        this._controller.zoom.delta -= 0.01 * this._controller.speed;
                     }
                 }
             }

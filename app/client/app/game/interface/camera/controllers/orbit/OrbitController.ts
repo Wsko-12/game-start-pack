@@ -10,13 +10,18 @@ export default class OrbitController extends CameraController {
     };
 
     public cameraAngles = {
-        alpha: 0,
-        tetha: 0,
+        alpha: Math.PI / 4,
+        tetha: Math.PI / 4,
 
         deltaAlpha: 0,
         deltaTetha: 0,
     };
-    public zoom = 1;
+    public zoom = {
+        value: 2,
+        max: 10,
+        min: 0.5,
+        delta: 0,
+    };
 
     private _blockHeightAngles = {
         min: (Math.PI / 180) * 10,
@@ -44,7 +49,19 @@ export default class OrbitController extends CameraController {
         const halfFovRad = (this._camera.fov / 2) * (Math.PI / 180);
         const cameraUnit = 0.5 / halfFovRad;
 
+        this.changeZoom();
         this.rotateCamera(cameraUnit);
+        this.smoothValues();
+    }
+
+    private changeZoom() {
+        this.zoom.value += this.zoom.delta;
+        if (this.zoom.value < this.zoom.min) {
+            this.zoom.value = this.zoom.min;
+        }
+        if (this.zoom.value > this.zoom.max) {
+            this.zoom.value = this.zoom.max;
+        }
     }
 
     private rotateCamera(unit: number) {
@@ -59,9 +76,6 @@ export default class OrbitController extends CameraController {
             this.cameraAngles.deltaTetha = 0;
         }
 
-        this.cameraAngles.deltaTetha = this.smoothDeltaValue(this.cameraAngles.deltaTetha);
-        this.cameraAngles.deltaAlpha = this.smoothDeltaValue(this.cameraAngles.deltaAlpha);
-
         const cameraXZ = new Point2(this._targetPosition.x, this._targetPosition.z).getCirclePoint(
             this.cameraAngles.alpha
         );
@@ -72,7 +86,7 @@ export default class OrbitController extends CameraController {
             cameraXZ.y - this._targetPosition.z,
             cameraY
         );
-        cameraVector.normalize().scale(this.zoom * unit);
+        cameraVector.normalize().scale(this.zoom.value * unit);
 
         const cameraPosition = new Point3(this._targetPosition.x, this._targetPosition.y, this._targetPosition.z);
         cameraPosition.x += cameraVector.x;
@@ -82,6 +96,13 @@ export default class OrbitController extends CameraController {
         this._cameraPosition.x = cameraPosition.x;
         this._cameraPosition.y = cameraPosition.y;
         this._cameraPosition.z = cameraPosition.z;
+    }
+
+    private smoothValues() {
+        this.cameraAngles.deltaTetha = this.smoothDeltaValue(this.cameraAngles.deltaTetha);
+        this.cameraAngles.deltaAlpha = this.smoothDeltaValue(this.cameraAngles.deltaAlpha);
+
+        this.zoom.delta = this.smoothDeltaValue(this.zoom.delta);
     }
 
     private smoothDeltaValue(value: number): number {
@@ -105,9 +126,16 @@ export default class OrbitController extends CameraController {
         this._handler.detach();
     }
 
-    private setBlocksAngles(min: number, max: number): void {
+    private setAnglesBlocks(min: number, max: number): void {
         this._blockHeightAngles.min = (Math.PI / 180) * min;
         this._blockHeightAngles.max = Math.PI / 2 - (Math.PI / 180) * max;
+    }
+
+    private setZoomBlocks(min: number, max: number): void {
+        if (min >= max) return;
+        if (min < 0) min = 0;
+        this.zoom.min = min;
+        this.zoom.max = max;
     }
 
     private setSpeed(value: number): void {
@@ -135,14 +163,17 @@ export default class OrbitController extends CameraController {
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (globalThis as any).$dev.camera = {
-            setBlocksAngles: (min: number, max: number) => {
-                this.setBlocksAngles(min, max);
+            setAnglesBlocks: (min: number, max: number) => {
+                this.setAnglesBlocks(min, max);
             },
             setSmooth: (value: number) => {
                 this.setSmooth(value);
             },
             setSpeed: (value: number) => {
                 this.setSpeed(value);
+            },
+            setZoomBlocks: (min: number, max: number) => {
+                this.setZoomBlocks(min, max);
             },
         };
     }

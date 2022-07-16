@@ -6,13 +6,8 @@ import OrbitController from './controllers/orbit/OrbitController';
 export default class GameCamera {
     private _camera: PerspectiveCamera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     private _controller: CameraController | null = null;
-    private _position = new Point3(0, 1.2071067811865475, 0);
+    private _position = new Point3(0, 0, 0);
     private _target = new Point3(0, 0, 0);
-
-    constructor(){
-        this._camera.position.set(0, 1.2071067811865475, 0);
-
-    }
 
     public getThreeCamera(): PerspectiveCamera {
         return this._camera;

@@ -10,7 +10,7 @@ export default class GameScene {
         dirLight.lookAt(0, 0, 0);
 
         const box = new Mesh(new BoxBufferGeometry(1, 1, 1), new MeshPhongMaterial({ color: 0xffffff }));
-        box.position.set(0,-0.5,0);
+        box.position.set(0, -0.5, 0);
         this._scene.add(ambLight, dirLight, box);
     }
 
