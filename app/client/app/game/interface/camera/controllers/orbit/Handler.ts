@@ -1,5 +1,6 @@
 import { Vector2 } from 'three';
 import { Point2 } from '../../../../../common/geometry/Geometry';
+import PageBuilder from '../../../../../common/PageBuilder';
 import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
@@ -31,6 +32,8 @@ export default class CameraEventsHandler {
         y2: 0,
         clicked: false,
         double: true,
+        moved: false,
+        timestamp: 0,
     };
 
     private _eventHandler: HTMLElement | null = null;
@@ -163,6 +166,7 @@ export default class CameraEventsHandler {
 
         this.touchStart = (e: TouchEvent): void => {
             e.preventDefault();
+            this._touch.timestamp = e.timeStamp;
             this._touch.x = e.touches[0].clientX;
             this._touch.y = e.touches[0].clientY;
             if (e.touches.length === 1) {
@@ -187,7 +191,7 @@ export default class CameraEventsHandler {
                 this._touch.y = e.touches[0].clientY;
 
                 if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-                    this._mouse.clicked.moved = true;
+                    this._touch.moved = true;
                 }
 
                 deltaX /= window.innerWidth;
@@ -197,14 +201,18 @@ export default class CameraEventsHandler {
                 this._controller.targetDirection.deltaY = deltaY * this._controller.speed * 1.5;
             }
             if (this._touch.double) {
-                const vectorA = new Vector2(
-                    e.touches[0].clientX - this._touch.x,
-                    e.touches[0].clientY - this._touch.y
-                ).normalize();
+                const vectorA = new Vector2(e.touches[0].clientX - this._touch.x, e.touches[0].clientY - this._touch.y);
                 const vectorB = new Vector2(
                     e.touches[1].clientX - this._touch.x2,
                     e.touches[1].clientY - this._touch.y2
-                ).normalize();
+                );
+
+                if (vectorA.length() > 10 || vectorB.length() > 10) {
+                    this._touch.moved = true;
+                }
+
+                vectorA.normalize();
+                vectorB.normalize();
 
                 const dot = vectorA.dot(vectorB);
                 if (dot < 0.75) {
@@ -239,17 +247,30 @@ export default class CameraEventsHandler {
         };
         this.touchEnd = (e: TouchEvent): void => {
             e.preventDefault();
-            this._touch.x = e.touches[0].clientX;
-            this._touch.y = e.touches[0].clientY;
             if (e.touches.length === 0) {
+                if (e.timeStamp - this._touch.timestamp < 200 && !this._touch.moved) {
+                    if (this._touch.clicked) {
+                        console.log('click');
+                    }
+                    if (this._touch.double) {
+                        //don't use it better
+                        console.log('context click');
+                    }
+                }
+
                 this._touch.clicked = false;
                 this._touch.double = false;
+                this._touch.moved = false;
             } else if (e.touches.length === 1) {
+                this._touch.x = e.touches[0].clientX;
+                this._touch.y = e.touches[0].clientY;
                 this._touch.clicked = true;
                 this._touch.double = false;
             } else {
                 this._touch.clicked = false;
                 this._touch.double = true;
+                this._touch.x = e.touches[0].clientX;
+                this._touch.y = e.touches[0].clientY;
                 this._touch.x2 = e.touches[1].clientX;
                 this._touch.y2 = e.touches[1].clientY;
             }
