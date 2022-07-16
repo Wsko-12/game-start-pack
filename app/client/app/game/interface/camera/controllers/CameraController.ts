@@ -9,7 +9,7 @@ export default abstract class CameraController {
         this._targetPosition = targetPoint;
     }
 
-    public abstract update(): void;
+    public abstract update(time: number): void;
     public abstract setEventHandler(element: HTMLElement): void;
     public abstract detachEventHandler(): void;
 }

@@ -3,11 +3,30 @@ import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
     private _controller: OrbitController;
+    private _time = 0;
     private _mouse = {
         x: 0,
         y: 0,
-        clicked: false,
-        context: false,
+        clicked: {
+            x: 0,
+            y: 0,
+            lastDelta: {
+                x: 0,
+                y: 0,
+            },
+            flag: false,
+            timestamp: 0,
+        },
+        context: {
+            x: 0,
+            y: 0,
+            lastDelta: {
+                x: 0,
+                y: 0,
+            },
+            flag: false,
+            timestamp: 0,
+        },
     };
 
     private _touch = {
@@ -60,9 +79,10 @@ export default class CameraEventsHandler {
                 if (deltaY % 1 === 0) {
                     if (deltaY === 100 || deltaY === -100) {
                         if (deltaY > 0) {
-                            console.log('zoom out');
+                            this._controller.zoom += 0.5;
                         } else {
-                            console.log('zoom in');
+                            this._controller.zoom -= 0.5;
+
                         }
                     } else {
                         if (deltaY > 0) {
@@ -76,32 +96,75 @@ export default class CameraEventsHandler {
                 } else {
                     //pitch
                     if (deltaY > 0) {
-                        console.log('zoom out', e.deltaY);
+                        this._controller.zoom += 0.1;
                     } else {
-                        console.log('zoom in', e.deltaY);
+                        this._controller.zoom -= 0.1;
                     }
                 }
             }
 
             if (deltaX !== 0) {
                 if (deltaX > 0) {
-                    this._controller.targetDirection.left += Math.abs(e.deltaX);
-                    // console.log('target right');
-                } else {
                     this._controller.targetDirection.left -= Math.abs(e.deltaX);
-                    // console.log('target left');
+                } else {
+                    this._controller.targetDirection.left += Math.abs(e.deltaX);
                 }
             }
             e.preventDefault();
         };
 
         this.mouseDown = (e: MouseEvent): void => {
+            if (e.button === 0) {
+                this._mouse.clicked.x = e.clientX;
+                this._mouse.clicked.y = e.clientY;
+                this._mouse.clicked.flag = true;
+                this._mouse.clicked.timestamp = this._time;
+            }
+            if (e.button === 2) {
+                this._mouse.context.x = e.clientX;
+                this._mouse.context.y = e.clientY;
+                this._mouse.context.flag = true;
+                this._mouse.context.timestamp = this._time;
+            }
             e.preventDefault();
         };
         this.mouseMove = (e: MouseEvent): void => {
+            this._mouse.x = e.clientX;
+            this._mouse.y = e.clientY;
+
+            if (this._mouse.clicked.flag) {
+                let deltaX = e.clientX - this._mouse.clicked.x;
+                let deltaY = this._mouse.clicked.y - e.clientY;
+
+                deltaX /= window.innerWidth;
+                deltaY /= window.innerHeight;
+
+                this._controller.targetDirection.left = deltaX;
+                this._controller.targetDirection.front = deltaY;
+            }
+
+            if (this._mouse.context.flag) {
+                let deltaX = e.clientX - this._mouse.context.x;
+                let deltaY = e.clientY - this._mouse.context.y;
+
+                this._mouse.context.x = e.clientX;
+                this._mouse.context.y = e.clientY;
+
+                deltaX /= window.innerWidth;
+                deltaY /= window.innerHeight;
+
+                this._controller.cameraAngles.deltaAlpha += deltaX * 2;
+                this._controller.cameraAngles.deltaTetha += deltaY * 2;
+            }
             e.preventDefault();
         };
         this.mouseUp = (e: MouseEvent): void => {
+            if (e.button === 0) {
+                this._mouse.clicked.flag = false;
+            }
+            if (e.button === 2) {
+                this._mouse.context.flag = false;
+            }
             e.preventDefault();
         };
 
@@ -124,6 +187,7 @@ export default class CameraEventsHandler {
         this._eventHandler.addEventListener('mousedown', this.mouseDown);
         this._eventHandler.addEventListener('mousemove', this.mouseMove);
         this._eventHandler.addEventListener('mouseup', this.mouseUp);
+        // this._eventHandler.addEventListener('mouseleave', this.mouseUp);
 
         this._eventHandler.addEventListener('touchmove', this.touchMove);
         this._eventHandler.addEventListener('touchstart', this.touchStart);
@@ -138,10 +202,19 @@ export default class CameraEventsHandler {
             this._eventHandler.removeEventListener('mousedown', this.mouseDown);
             this._eventHandler.removeEventListener('mousemove', this.mouseMove);
             this._eventHandler.removeEventListener('mouseup', this.mouseUp);
+            // this._eventHandler.removeEventListener('mouseleave', this.mouseUp);
 
             this._eventHandler.removeEventListener('touchmove', this.touchMove);
             this._eventHandler.removeEventListener('touchstart', this.touchStart);
             this._eventHandler.removeEventListener('touchend', this.touchEnd);
         }
+    }
+
+    update(time: number) {
+        this._time = time;
+        // if (this._mouse.clicked.flag && this._time - this._mouse.clicked.timestamp > 0.5) {
+        //     this._mouse.clicked.x = this._mouse.x;
+        //     this._mouse.clicked.y = this._mouse.y;
+        // }
     }
 }

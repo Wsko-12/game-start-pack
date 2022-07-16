@@ -12,7 +12,7 @@ export default class GameManager {
         render: new Loop(60, (time) => {
             this._interface.renderLoop(time);
         }),
-        update: new Loop(30, (time) => {
+        update: new Loop(40, (time) => {
             this._interface.updateLoop(time);
             this._world.updateLoop(time);
         }),
@@ -50,7 +50,12 @@ export default class GameManager {
 
     private setDevFunctions() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (globalThis as any).$dev = {
+        if (!(globalThis as any).$dev) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (globalThis as any).$dev = {};
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).$dev.render = {
             showStats: (value: boolean) => {
                 this._interface.statsSwitcher(value);
             },
