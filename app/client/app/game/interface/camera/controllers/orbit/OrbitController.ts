@@ -170,26 +170,26 @@ export default class OrbitController extends CameraController {
         this._handler.detach();
     }
 
-    private setAnglesBlocks(min: number, max: number): void {
+    public setAnglesBlocks(min: number, max: number): void {
         this._blockHeightAngles.min = (Math.PI / 180) * min;
         this._blockHeightAngles.max = Math.PI / 2 - (Math.PI / 180) * max;
     }
 
-    private setZoomBlocks(min: number, max: number): void {
+    public setZoomBlocks(min: number, max: number): void {
         if (min >= max) return;
         if (min < 0) min = 0;
         this.zoom.min = min;
         this.zoom.max = max;
     }
 
-    private setSpeed(value: number): void {
+    public setSpeed(value: number): void {
         if (value < 0) {
             value = 0;
         }
         this.speed = value;
     }
 
-    private setSmooth(value: number): void {
+    public setSmooth(value: number): void {
         if (value > 0.99) {
             value = 0.99;
         }
@@ -197,6 +197,19 @@ export default class OrbitController extends CameraController {
             value = 0;
         }
         this._smooth = value;
+    }
+
+    public setTargetPosition(x: number, y: number, z: number): void {
+        this._targetPosition.x = x;
+        this._targetPosition.y = y;
+        this._targetPosition.z = z;
+    }
+
+    public setBlockRect(x: number, y: number, width: number, height: number) {
+        this._blockRect.x = x;
+        this._blockRect.y = y;
+        this._blockRect.width = width;
+        this._blockRect.height = height;
     }
 
     private setDevFunctions(): void {
@@ -226,18 +239,5 @@ export default class OrbitController extends CameraController {
                 this.setBlockRect(x, y, width, height);
             },
         };
-    }
-
-    public setTargetPosition(x: number, y: number, z: number): void {
-        this._targetPosition.x = x;
-        this._targetPosition.y = y;
-        this._targetPosition.z = z;
-    }
-
-    public setBlockRect(x: number, y: number, width: number, height: number) {
-        this._blockRect.x = x;
-        this._blockRect.y = y;
-        this._blockRect.width = width;
-        this._blockRect.height = height;
     }
 }
