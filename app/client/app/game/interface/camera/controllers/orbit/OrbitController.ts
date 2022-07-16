@@ -37,7 +37,7 @@ export default class OrbitController extends CameraController {
     private _camera: PerspectiveCamera;
 
     public speed = 1;
-    private _smooth = 0.85;
+    private _smooth = 0.8;
 
     private _handler = new CameraEventsHandler(this);
     constructor(positionPoint: Point3, targetPoint: Point3, camera: PerspectiveCamera) {

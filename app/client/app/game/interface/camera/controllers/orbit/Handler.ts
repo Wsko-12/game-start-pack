@@ -1,3 +1,5 @@
+import { Vector2 } from 'three';
+import { Point2 } from '../../../../../common/geometry/Geometry';
 import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
@@ -9,21 +11,15 @@ export default class CameraEventsHandler {
         clicked: {
             x: 0,
             y: 0,
-            lastDelta: {
-                x: 0,
-                y: 0,
-            },
             flag: false,
+            moved: false,
             timestamp: 0,
         },
         context: {
             x: 0,
             y: 0,
-            lastDelta: {
-                x: 0,
-                y: 0,
-            },
             flag: false,
+            moved: false,
             timestamp: 0,
         },
     };
@@ -60,22 +56,7 @@ export default class CameraEventsHandler {
 
         this.wheel = (e: WheelEvent): void => {
             e.preventDefault();
-            /*
-                deltaY = -100 zoom in
-                deltaY = 100 zoom out
-
-                deltaY int + move target back
-                deltaY int - move target front
-
-                deltaY float + zoom out
-                deltaY float - zoom in
-
-
-                deltaX int + move target right
-                deltaX int - move target left
-            */
             const { deltaX, deltaY } = e;
-
             if (deltaY !== 0) {
                 if (deltaY % 1 === 0) {
                     if (deltaY === 100 || deltaY === -100) {
@@ -89,11 +70,7 @@ export default class CameraEventsHandler {
                     }
                 } else {
                     //pitch
-                    if (deltaY > 0) {
-                        this._controller.zoom.delta += 0.05 * this._controller.speed;
-                    } else {
-                        this._controller.zoom.delta -= 0.05 * this._controller.speed;
-                    }
+                    this._controller.zoom.delta += deltaY * this._controller.speed * 0.01;
                 }
             }
 
@@ -108,13 +85,13 @@ export default class CameraEventsHandler {
                 this._mouse.clicked.x = e.clientX;
                 this._mouse.clicked.y = e.clientY;
                 this._mouse.clicked.flag = true;
-                this._mouse.clicked.timestamp = this._time;
+                this._mouse.clicked.timestamp = e.timeStamp;
             }
             if (e.button === 2) {
                 this._mouse.context.x = e.clientX;
                 this._mouse.context.y = e.clientY;
                 this._mouse.context.flag = true;
-                this._mouse.context.timestamp = this._time;
+                this._mouse.context.timestamp = e.timeStamp;
             }
         };
 
@@ -130,6 +107,10 @@ export default class CameraEventsHandler {
                 this._mouse.clicked.x = e.clientX;
                 this._mouse.clicked.y = e.clientY;
 
+                if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                    this._mouse.clicked.moved = true;
+                }
+
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
@@ -138,11 +119,17 @@ export default class CameraEventsHandler {
             }
 
             if (this._mouse.context.flag) {
+                this._mouse.context.moved = true;
+
                 let deltaX = e.clientX - this._mouse.context.x;
                 let deltaY = e.clientY - this._mouse.context.y;
 
                 this._mouse.context.x = e.clientX;
                 this._mouse.context.y = e.clientY;
+
+                if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                    this._mouse.context.moved = true;
+                }
 
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
@@ -155,10 +142,18 @@ export default class CameraEventsHandler {
         this.mouseUp = (e: MouseEvent): void => {
             e.preventDefault();
             if (e.button === 0) {
+                if (e.timeStamp - this._mouse.clicked.timestamp < 100 && !this._mouse.clicked.moved) {
+                    console.log('click');
+                }
                 this._mouse.clicked.flag = false;
+                this._mouse.clicked.moved = false;
             }
             if (e.button === 2) {
+                if (e.timeStamp - this._mouse.context.timestamp < 100 && !this._mouse.context.moved) {
+                    console.log('context click');
+                }
                 this._mouse.context.flag = false;
+                this._mouse.context.moved = false;
             }
             if (e.type === 'mouseleave') {
                 this._mouse.clicked.flag = false;
@@ -167,14 +162,97 @@ export default class CameraEventsHandler {
         };
 
         this.touchStart = (e: TouchEvent): void => {
-            console.log(e);
             e.preventDefault();
+            this._touch.x = e.touches[0].clientX;
+            this._touch.y = e.touches[0].clientY;
+            if (e.touches.length === 1) {
+                this._touch.clicked = true;
+                this._touch.double = false;
+            }
+            if (e.touches.length > 1) {
+                this._touch.clicked = false;
+                this._touch.double = true;
+                this._touch.x2 = e.touches[1].clientX;
+                this._touch.y2 = e.touches[1].clientY;
+            }
         };
         this.touchMove = (e: TouchEvent): void => {
             e.preventDefault();
+
+            if (this._touch.clicked) {
+                let deltaX = e.touches[0].clientX - this._touch.x;
+                let deltaY = e.touches[0].clientY - this._touch.y;
+
+                this._touch.x = e.touches[0].clientX;
+                this._touch.y = e.touches[0].clientY;
+
+                if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                    this._mouse.clicked.moved = true;
+                }
+
+                deltaX /= window.innerWidth;
+                deltaY /= window.innerHeight;
+
+                this._controller.targetDirection.deltaX = deltaX * this._controller.speed * 1.5;
+                this._controller.targetDirection.deltaY = deltaY * this._controller.speed * 1.5;
+            }
+            if (this._touch.double) {
+                const vectorA = new Vector2(
+                    e.touches[0].clientX - this._touch.x,
+                    e.touches[0].clientY - this._touch.y
+                ).normalize();
+                const vectorB = new Vector2(
+                    e.touches[1].clientX - this._touch.x2,
+                    e.touches[1].clientY - this._touch.y2
+                ).normalize();
+
+                const dot = vectorA.dot(vectorB);
+                if (dot < 0.75) {
+                    //pitch
+                    const pointABefore = new Point2(this._touch.x, this._touch.y);
+                    const pointAAfter = new Point2(e.touches[0].clientX, e.touches[0].clientY);
+
+                    const pointBBefore = new Point2(this._touch.x2, this._touch.y2);
+                    const pointBAfter = new Point2(e.touches[1].clientX, e.touches[1].clientY);
+
+                    const distanceBefore = pointABefore.getDistanceTo(pointBBefore);
+                    const distanceAfter = pointAAfter.getDistanceTo(pointBAfter);
+
+                    const delta = distanceAfter - distanceBefore;
+                    this._controller.zoom.delta += -delta / Math.max(window.innerWidth, window.innerHeight);
+                } else {
+                    let deltaX = (e.touches[1].clientX - this._touch.x2) | (e.touches[0].clientX - this._touch.x);
+                    let deltaY = (e.touches[1].clientY - this._touch.y2) | (e.touches[0].clientY - this._touch.y);
+
+                    deltaX /= window.innerWidth;
+                    deltaY /= window.innerHeight;
+
+                    this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
+                    this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
+                }
+
+                this._touch.x = e.touches[0].clientX;
+                this._touch.y = e.touches[0].clientY;
+                this._touch.x2 = e.touches[1].clientX;
+                this._touch.y2 = e.touches[1].clientY;
+            }
         };
         this.touchEnd = (e: TouchEvent): void => {
             e.preventDefault();
+            this._touch.x = e.touches[0].clientX;
+            this._touch.y = e.touches[0].clientY;
+            if (e.touches.length === 0) {
+                this._touch.clicked = false;
+                this._touch.double = false;
+            } else if (e.touches.length === 1) {
+                this._touch.clicked = true;
+                this._touch.double = false;
+            } else {
+                this._touch.clicked = false;
+                this._touch.double = true;
+                this._touch.x2 = e.touches[1].clientX;
+                this._touch.y2 = e.touches[1].clientY;
+            }
         };
     }
 
@@ -211,9 +289,5 @@ export default class CameraEventsHandler {
 
     update(time: number) {
         this._time = time;
-        // if (this._mouse.clicked.flag && this._time - this._mouse.clicked.timestamp > 0.5) {
-        //     this._mouse.clicked.x = this._mouse.x;
-        //     this._mouse.clicked.y = this._mouse.y;
-        // }
     }
 }

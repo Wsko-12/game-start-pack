@@ -119,6 +119,10 @@ export class Vector2 {
         this.y += vec.y;
         return this;
     }
+
+    public dot(vec: Vector2) {
+        return (this.x / this.length) * vec.x + this.y / this.length + vec.y;
+    }
 }
 
 export class Vector3 {
