@@ -23,6 +23,13 @@ export default class OrbitController extends CameraController {
         delta: 0,
     };
 
+    private _blockRect = {
+        x: -0.5,
+        y: -0.5,
+        width: 1,
+        height: 1,
+    };
+
     private _blockHeightAngles = {
         min: (Math.PI / 180) * 10,
         max: Math.PI / 2 - (Math.PI / 180) * 10,
@@ -79,6 +86,20 @@ export default class OrbitController extends CameraController {
         const targetPoint2 = new Point2(this._targetPosition.x, this._targetPosition.z);
         cameraFrontVector.movePoint(targetPoint2);
         cameraSideVector.movePoint(targetPoint2);
+
+        if (targetPoint2.x < this._blockRect.x) {
+            targetPoint2.x = this._blockRect.x;
+        }
+        if (targetPoint2.x > this._blockRect.x + this._blockRect.width) {
+            targetPoint2.x = this._blockRect.x + this._blockRect.width;
+        }
+
+        if (targetPoint2.y < this._blockRect.y) {
+            targetPoint2.y = this._blockRect.y;
+        }
+        if (targetPoint2.y > this._blockRect.y + this._blockRect.height) {
+            targetPoint2.y = this._blockRect.y + this._blockRect.height;
+        }
 
         this._targetPosition.x = targetPoint2.x;
         this._targetPosition.z = targetPoint2.y;
@@ -201,6 +222,9 @@ export default class OrbitController extends CameraController {
             setTargetPosition: (x: number, y: number, z: number): void => {
                 this.setTargetPosition(x, y, z);
             },
+            setBlockRect: (x: number, y: number, width: number, height: number): void => {
+                this.setBlockRect(x, y, width, height);
+            },
         };
     }
 
@@ -208,5 +232,12 @@ export default class OrbitController extends CameraController {
         this._targetPosition.x = x;
         this._targetPosition.y = y;
         this._targetPosition.z = z;
+    }
+
+    public setBlockRect(x: number, y: number, width: number, height: number) {
+        this._blockRect.x = x;
+        this._blockRect.y = y;
+        this._blockRect.width = width;
+        this._blockRect.height = height;
     }
 }

@@ -83,13 +83,7 @@ export default class CameraEventsHandler {
                             this._controller.zoom.delta -= 0.1 * this._controller.speed;
                         }
                     } else {
-                        if (deltaY > 0) {
-                            // this._controller.targetDirection.deltaY += Math.abs(e.deltaY);
-                            // console.log('move target front', e.deltaY);
-                        } else {
-                            // this._controller.targetDirection.deltaY -= e.deltaY;
-                            // console.log('move target back', e.deltaY);
-                        }
+                        this._controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
                     }
                 } else {
                     //pitch
@@ -102,11 +96,7 @@ export default class CameraEventsHandler {
             }
 
             if (deltaX !== 0) {
-                if (deltaX > 0) {
-                    // this._controller.targetDirection.left -= Math.abs(e.deltaX);
-                } else {
-                    // this._controller.targetDirection.left += Math.abs(e.deltaX);
-                }
+                this._controller.targetDirection.deltaX += (-e.deltaX / window.innerWidth) * 0.25;
             }
             e.preventDefault();
         };
