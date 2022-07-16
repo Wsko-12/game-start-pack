@@ -57,7 +57,9 @@ export default class CameraEventsHandler {
             e.preventDefault();
             return false;
         };
+
         this.wheel = (e: WheelEvent): void => {
+            e.preventDefault();
             /*
                 deltaY = -100 zoom in
                 deltaY = 100 zoom out
@@ -98,10 +100,10 @@ export default class CameraEventsHandler {
             if (deltaX !== 0) {
                 this._controller.targetDirection.deltaX += (-e.deltaX / window.innerWidth) * 0.25;
             }
-            e.preventDefault();
         };
 
         this.mouseDown = (e: MouseEvent): void => {
+            e.preventDefault();
             if (e.button === 0) {
                 this._mouse.clicked.x = e.clientX;
                 this._mouse.clicked.y = e.clientY;
@@ -114,9 +116,10 @@ export default class CameraEventsHandler {
                 this._mouse.context.flag = true;
                 this._mouse.context.timestamp = this._time;
             }
-            e.preventDefault();
         };
+
         this.mouseMove = (e: MouseEvent): void => {
+            e.preventDefault();
             this._mouse.x = e.clientX;
             this._mouse.y = e.clientY;
 
@@ -147,9 +150,10 @@ export default class CameraEventsHandler {
                 this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
                 this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
             }
-            e.preventDefault();
         };
+
         this.mouseUp = (e: MouseEvent): void => {
+            e.preventDefault();
             if (e.button === 0) {
                 this._mouse.clicked.flag = false;
             }
@@ -160,10 +164,10 @@ export default class CameraEventsHandler {
                 this._mouse.clicked.flag = false;
                 this._mouse.context.flag = false;
             }
-            e.preventDefault();
         };
 
         this.touchStart = (e: TouchEvent): void => {
+            console.log(e);
             e.preventDefault();
         };
         this.touchMove = (e: TouchEvent): void => {
