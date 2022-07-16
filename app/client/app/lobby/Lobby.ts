@@ -2,6 +2,8 @@ import PageBuilder from '../common/PageBuilder';
 
 export default class Lobby {
     public start(startGameCallback: () => void) {
+        startGameCallback();
+        return;
         document.body.innerHTML = '';
         const startBtn = <HTMLButtonElement>PageBuilder.createElement('button');
         startBtn.innerHTML = 'START';

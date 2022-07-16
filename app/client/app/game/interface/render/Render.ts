@@ -60,7 +60,7 @@ export default class Render {
         this._canvas.style.height = window.innerHeight + 'px';
 
         if (this._camera) {
-            this._camera.aspect = windowWidth / windowHeight;
+            this._camera.aspect = window.innerWidth / window.innerHeight;
             this._camera.updateProjectionMatrix();
         }
         // if(this.composer){

@@ -1,10 +1,15 @@
-import GameCamera from '../GameCamera';
+import { Point3 } from '../../../../common/geometry/Geometry';
 
 export default abstract class CameraController {
-    protected _camera: GameCamera;
-    constructor(camera: GameCamera) {
-        this._camera = camera;
+    protected _cameraPosition: Point3;
+    protected _targetPosition: Point3;
+
+    constructor(positionPoint: Point3, targetPoint: Point3) {
+        this._cameraPosition = positionPoint;
+        this._targetPosition = targetPoint;
     }
 
-    public abstract update(): void;
+    public abstract update(time: number): void;
+    public abstract setEventHandler(element: HTMLElement): void;
+    public abstract detachEventHandler(): void;
 }

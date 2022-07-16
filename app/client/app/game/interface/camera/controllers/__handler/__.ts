@@ -12,7 +12,10 @@ export default class CameraEventsHandler {
     private _touch = {
         x: 0,
         y: 0,
+        x2: 0,
+        y2: 0,
         clicked: false,
+        double: true,
     };
 
     private contextmenu: (e: MouseEvent) => boolean;
