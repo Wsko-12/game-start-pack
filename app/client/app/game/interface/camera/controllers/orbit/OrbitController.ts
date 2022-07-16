@@ -1,6 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { Point2, Point3, Vector2, Vector3 } from '../../../../../common/geometry/Geometry';
-import GameCamera from '../../GameCamera';
+import { Point2, Point3, Vector3 } from '../../../../../common/geometry/Geometry';
 import CameraController from '../CameraController';
 import CameraEventsHandler from './Handler';
 
@@ -29,28 +28,14 @@ export default class OrbitController extends CameraController {
     public rotationAngel = 0;
     public heightAngle = 0;
 
-    private _speed = 1;
+    public speed = 1;
     private _smooth = 0.9;
 
     private _handler = new CameraEventsHandler(this);
     constructor(positionPoint: Point3, targetPoint: Point3, camera: PerspectiveCamera) {
         super(positionPoint, targetPoint);
         this._camera = camera;
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!(globalThis as any).$dev) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (globalThis as any).$dev = {};
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (globalThis as any).$dev.camera = {
-            setBlocksAngles: (min: number, max: number) => {
-                this.setBlocksAngles(min, max);
-            },
-            setSmooth: (value: number) => {
-                this.setSmooth(value);
-            },
-        };
+        this.setDevFunctions();
     }
 
     public update(time: number): void {
@@ -60,62 +45,6 @@ export default class OrbitController extends CameraController {
         const cameraUnit = 0.5 / halfFovRad;
 
         this.rotateCamera(cameraUnit);
-
-        // if (this.targetDirection.left < 0 && this.targetDirection.left > -0.00000000005) {
-        //     this.targetDirection.left = 0;
-        // }
-
-        // this.targetDirection.front *= this._smooth;
-        // if (this.targetDirection.front > 0 && this.targetDirection.front < 0.00000000005) {
-        //     this.targetDirection.front = 0;
-        // }
-        // if (this.targetDirection.front < 0 && this.targetDirection.front > -0.00000000005) {
-        //     this.targetDirection.front = 0;
-        // }
-        // console.log(this.cameraAngles.deltaAlpha, this.cameraAngles.deltaTetha)
-
-        // const length = this._cameraPosition.getDistanceTo(this._targetPosition);
-
-        // const cameraFrontVector = new Vector2(
-        //     this._cameraPosition.x - this._targetPosition.x,
-        //     this._cameraPosition.z - this._targetPosition.z
-        // );
-        // const cameraLeftVector = cameraFrontVector.getPerpendicularVector();
-
-        // const targetPoint2D = new Point2(this._targetPosition.x, this._targetPosition.z);
-
-        // cameraFrontVector.normalize().scale(this.targetDirection.front);
-        // cameraLeftVector.normalize().scale(this.targetDirection.left);
-
-        // cameraFrontVector
-        //     .addVector(cameraLeftVector)
-        //     .scale(this._speed * this._zoom)
-        //     .movePoint(targetPoint2D);
-
-        // this._targetPosition.x = targetPoint2D.x;
-        // this._targetPosition.z = targetPoint2D.y;
-
-        // const cameraPositionXZ = targetPoint2D.getCirclePoint(this.rotationAngel);
-
-        // this._cameraPosition.x = cameraPositionXZ.x;
-        // this._cameraPosition.y = this._targetPosition.y + this._zoom;
-        // this._cameraPosition.z = cameraPositionXZ.y;
-
-        // this.targetDirection.left *= this._smooth;
-        // if (this.targetDirection.left > 0 && this.targetDirection.left < 0.00000000005) {
-        //     this.targetDirection.left = 0;
-        // }
-        // if (this.targetDirection.left < 0 && this.targetDirection.left > -0.00000000005) {
-        //     this.targetDirection.left = 0;
-        // }
-
-        // this.targetDirection.front *= this._smooth;
-        // if (this.targetDirection.front > 0 && this.targetDirection.front < 0.00000000005) {
-        //     this.targetDirection.front = 0;
-        // }
-        // if (this.targetDirection.front < 0 && this.targetDirection.front > -0.00000000005) {
-        //     this.targetDirection.front = 0;
-        // }
     }
 
     private rotateCamera(unit: number) {
@@ -181,6 +110,13 @@ export default class OrbitController extends CameraController {
         this._blockHeightAngles.max = Math.PI / 2 - (Math.PI / 180) * max;
     }
 
+    private setSpeed(value: number): void {
+        if (value < 0) {
+            value = 0;
+        }
+        this.speed = value;
+    }
+
     private setSmooth(value: number): void {
         if (value > 0.99) {
             value = 0.99;
@@ -189,5 +125,25 @@ export default class OrbitController extends CameraController {
             value = 0;
         }
         this._smooth = value;
+    }
+
+    private setDevFunctions(): void {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!(globalThis as any).$dev) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (globalThis as any).$dev = {};
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).$dev.camera = {
+            setBlocksAngles: (min: number, max: number) => {
+                this.setBlocksAngles(min, max);
+            },
+            setSmooth: (value: number) => {
+                this.setSmooth(value);
+            },
+            setSpeed: (value: number) => {
+                this.setSpeed(value);
+            },
+        };
     }
 }

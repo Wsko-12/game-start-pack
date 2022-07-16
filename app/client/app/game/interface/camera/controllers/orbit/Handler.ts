@@ -1,4 +1,3 @@
-import CameraController from '../CameraController';
 import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
@@ -82,7 +81,6 @@ export default class CameraEventsHandler {
                             this._controller.zoom += 0.5;
                         } else {
                             this._controller.zoom -= 0.5;
-
                         }
                     } else {
                         if (deltaY > 0) {
@@ -153,8 +151,8 @@ export default class CameraEventsHandler {
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.cameraAngles.deltaAlpha += deltaX * 2;
-                this._controller.cameraAngles.deltaTetha += deltaY * 2;
+                this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
+                this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
             }
             e.preventDefault();
         };
@@ -163,6 +161,10 @@ export default class CameraEventsHandler {
                 this._mouse.clicked.flag = false;
             }
             if (e.button === 2) {
+                this._mouse.context.flag = false;
+            }
+            if (e.type === 'mouseleave') {
+                this._mouse.clicked.flag = false;
                 this._mouse.context.flag = false;
             }
             e.preventDefault();
@@ -187,7 +189,7 @@ export default class CameraEventsHandler {
         this._eventHandler.addEventListener('mousedown', this.mouseDown);
         this._eventHandler.addEventListener('mousemove', this.mouseMove);
         this._eventHandler.addEventListener('mouseup', this.mouseUp);
-        // this._eventHandler.addEventListener('mouseleave', this.mouseUp);
+        this._eventHandler.addEventListener('mouseleave', this.mouseUp);
 
         this._eventHandler.addEventListener('touchmove', this.touchMove);
         this._eventHandler.addEventListener('touchstart', this.touchStart);
@@ -202,7 +204,7 @@ export default class CameraEventsHandler {
             this._eventHandler.removeEventListener('mousedown', this.mouseDown);
             this._eventHandler.removeEventListener('mousemove', this.mouseMove);
             this._eventHandler.removeEventListener('mouseup', this.mouseUp);
-            // this._eventHandler.removeEventListener('mouseleave', this.mouseUp);
+            this._eventHandler.removeEventListener('mouseleave', this.mouseUp);
 
             this._eventHandler.removeEventListener('touchmove', this.touchMove);
             this._eventHandler.removeEventListener('touchstart', this.touchStart);
