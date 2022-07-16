@@ -84,28 +84,28 @@ export default class CameraEventsHandler {
                         }
                     } else {
                         if (deltaY > 0) {
-                            this._controller.targetDirection.front += Math.abs(e.deltaY);
+                            // this._controller.targetDirection.deltaY += Math.abs(e.deltaY);
                             // console.log('move target front', e.deltaY);
                         } else {
-                            this._controller.targetDirection.front -= Math.abs(e.deltaY);
+                            // this._controller.targetDirection.deltaY -= e.deltaY;
                             // console.log('move target back', e.deltaY);
                         }
                     }
                 } else {
                     //pitch
                     if (deltaY > 0) {
-                        this._controller.zoom.delta += 0.01 * this._controller.speed;
+                        this._controller.zoom.delta += 0.05 * this._controller.speed;
                     } else {
-                        this._controller.zoom.delta -= 0.01 * this._controller.speed;
+                        this._controller.zoom.delta -= 0.05 * this._controller.speed;
                     }
                 }
             }
 
             if (deltaX !== 0) {
                 if (deltaX > 0) {
-                    this._controller.targetDirection.left -= Math.abs(e.deltaX);
+                    // this._controller.targetDirection.left -= Math.abs(e.deltaX);
                 } else {
-                    this._controller.targetDirection.left += Math.abs(e.deltaX);
+                    // this._controller.targetDirection.left += Math.abs(e.deltaX);
                 }
             }
             e.preventDefault();
@@ -132,13 +132,16 @@ export default class CameraEventsHandler {
 
             if (this._mouse.clicked.flag) {
                 let deltaX = e.clientX - this._mouse.clicked.x;
-                let deltaY = this._mouse.clicked.y - e.clientY;
+                let deltaY = e.clientY - this._mouse.clicked.y;
+
+                this._mouse.clicked.x = e.clientX;
+                this._mouse.clicked.y = e.clientY;
 
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.targetDirection.left = deltaX;
-                this._controller.targetDirection.front = deltaY;
+                this._controller.targetDirection.deltaX = deltaX * this._controller.speed;
+                this._controller.targetDirection.deltaY = deltaY * this._controller.speed;
             }
 
             if (this._mouse.context.flag) {
