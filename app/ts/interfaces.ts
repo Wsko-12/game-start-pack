@@ -9,3 +9,8 @@ export interface IPoint3 {
     y: number;
     z: number;
 }
+
+export interface ICustomMouseEvent {
+    x: number;
+    y: number;
+}

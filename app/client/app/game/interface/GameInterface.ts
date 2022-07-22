@@ -15,10 +15,14 @@ export default class GameInterface {
         this._camera.setController('orbit');
 
         const canvas = this._render.getCanvas();
-        this._camera.setEventHandler(canvas);
+        const mainEventsHandler = this._view.getMainEventsHandler();
+        this._camera.setEventHandler(mainEventsHandler);
         this._view.appendCanvas(canvas);
     }
 
+    public getCamera() {
+        return this._camera.getThreeCamera();
+    }
     public setRenderScene(scene: Scene): void {
         this._render.setScene(scene);
     }
@@ -48,4 +52,8 @@ export default class GameInterface {
     public updateLoop = (time: number): void => {
         this._camera.update(time);
     };
+
+    public getMainEventsHandler() {
+        return this._view.getMainEventsHandler();
+    }
 }

@@ -1,9 +1,20 @@
 import { Vector2 } from 'three';
+import { ECustomEvents } from '../../../../../../../ts/enums';
+import { ICustomMouseEvent } from '../../../../../../../ts/interfaces';
 import { Point2 } from '../../../../../common/geometry/Geometry';
-import PageBuilder from '../../../../../common/PageBuilder';
 import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
+    static createPointerEvent(type: string, cords: [number, number]) {
+        const event = new CustomEvent<ICustomMouseEvent>(type, {
+            detail: {
+                x: (cords[0] / window.innerWidth) * 2 - 1,
+                y: -(cords[1] / window.innerHeight) * 2 + 1,
+            },
+        });
+        return event;
+    }
+
     private _controller: OrbitController;
     private _time = 0;
     private _mouse = {
@@ -102,6 +113,8 @@ export default class CameraEventsHandler {
             e.preventDefault();
             this._mouse.x = e.clientX;
             this._mouse.y = e.clientY;
+            const event = CameraEventsHandler.createPointerEvent(ECustomEvents.mouseMove, [e.clientX, e.clientY]);
+            this._eventHandler?.dispatchEvent(event);
 
             if (this._mouse.clicked.flag) {
                 let deltaX = e.clientX - this._mouse.clicked.x;
@@ -146,7 +159,8 @@ export default class CameraEventsHandler {
             e.preventDefault();
             if (e.button === 0) {
                 if (e.timeStamp - this._mouse.clicked.timestamp < 150 && !this._mouse.clicked.moved) {
-                    console.log('click');
+                    const event = CameraEventsHandler.createPointerEvent(ECustomEvents.click, [e.clientX, e.clientY]);
+                    this._eventHandler?.dispatchEvent(event);
                 }
                 this._mouse.clicked.flag = false;
                 this._mouse.clicked.moved = false;
@@ -180,6 +194,7 @@ export default class CameraEventsHandler {
                 this._touch.y2 = e.touches[1].clientY;
             }
         };
+
         this.touchMove = (e: TouchEvent): void => {
             e.preventDefault();
 
@@ -245,6 +260,7 @@ export default class CameraEventsHandler {
                 this._touch.y2 = e.touches[1].clientY;
             }
         };
+
         this.touchEnd = (e: TouchEvent): void => {
             e.preventDefault();
             if (e.touches.length === 0) {
