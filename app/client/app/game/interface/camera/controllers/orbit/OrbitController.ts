@@ -50,7 +50,7 @@ export default class OrbitController extends CameraController {
         this._handler.update(time);
 
         const halfFovRad = (this._camera.fov / 2) * (Math.PI / 180);
-        const cameraUnit = 0.5 / halfFovRad;
+        const cameraUnit = 0.5 / Math.tan(halfFovRad);
 
         this.changeZoom();
         this.moveTarget(cameraUnit);
@@ -75,9 +75,9 @@ export default class OrbitController extends CameraController {
         );
 
         const cameraSideVector = new Vector2(-cameraFrontVector.y, cameraFrontVector.x);
-
-        cameraFrontVector.normalize().scale(unit * this.zoom.value * this.targetDirection.deltaY);
-        cameraSideVector.normalize().scale(unit * this.zoom.value * this._camera.aspect * -this.targetDirection.deltaX);
+        const cameraHeight = unit * this.zoom.value;
+        cameraFrontVector.normalize().scale(cameraHeight * this.targetDirection.deltaY * 2.5);
+        cameraSideVector.normalize().scale(cameraHeight * -this.targetDirection.deltaX * this._camera.aspect * 2);
 
         const targetPoint2 = new Point2(this._targetPosition.x, this._targetPosition.z);
         cameraFrontVector.movePoint(targetPoint2);
@@ -124,7 +124,6 @@ export default class OrbitController extends CameraController {
             cameraY
         );
         cameraVector.normalize().scale(this.zoom.value * unit);
-
         const cameraPosition = new Point3(this._targetPosition.x, this._targetPosition.y, this._targetPosition.z);
         cameraPosition.x += cameraVector.x;
         cameraPosition.y += cameraVector.z;
