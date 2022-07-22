@@ -212,8 +212,8 @@ export default class CameraEventsHandler {
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.targetDirection.deltaX = deltaX * this._controller.speed * 1.5;
-                this._controller.targetDirection.deltaY = deltaY * this._controller.speed * 1.5;
+                this._controller.targetDirection.deltaX = deltaX * this._controller.speed;
+                this._controller.targetDirection.deltaY = deltaY * this._controller.speed;
             }
             if (this._touch.double) {
                 const vectorA = new Vector2(e.touches[0].clientX - this._touch.x, e.touches[0].clientY - this._touch.y);
@@ -266,7 +266,8 @@ export default class CameraEventsHandler {
             if (e.touches.length === 0) {
                 if (e.timeStamp - this._touch.timestamp < 200 && !this._touch.moved) {
                     if (this._touch.clicked) {
-                        console.log('click');
+                        const event = CameraEventsHandler.createPointerEvent(ECustomEvents.click, [this._touch.x, this._touch.y]);
+                        this._eventHandler?.dispatchEvent(event);
                     }
                     if (this._touch.double) {
                         //don't use it better
