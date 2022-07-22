@@ -1,13 +1,13 @@
 import GameInterface from './interface/GameInterface';
 
 import Loop from './loop/Loop';
-import ModeEventManager from './modeEventManager/ModeEventManager';
 import World from './world/World';
+import IOManager from './IOManager/IOManager';
 
 export default class GameManager {
     private _world = new World();
     private _interface = new GameInterface();
-    private _modeEventManager = new ModeEventManager(this._world, this._interface.getCamera());
+    private _IOManager = new IOManager(this._world, this._interface.getCamera());
     private _loops = {
         paused: false,
         timestamp: 0,
@@ -29,7 +29,7 @@ export default class GameManager {
             const gameScene = this._world.getMainScene();
             this._interface.setRenderScene(gameScene);
             this._interface.buildToDocument();
-            this._modeEventManager.setMainEventsHandler(this._interface.getMainEventsHandler());
+            this._IOManager.setMainEventsHandler(this._interface.getMainEventsHandler());
 
             this._loops.render.switcher(true);
             this._loops.update.switcher(true);

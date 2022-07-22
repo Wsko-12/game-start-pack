@@ -3,7 +3,7 @@ import { ECustomEvents, EGameMode } from '../../../../ts/enums';
 import { ICustomMouseEvent } from '../../../../ts/interfaces';
 import World from '../world/World';
 
-export default class ModeEventManager {
+export default class IOManager {
     private _mode: EGameMode = EGameMode.freeCam;
     private _world: World;
     private _camera: Camera;
