@@ -5,6 +5,7 @@ export default class View {
     private _gameScreen: HTMLElement;
     private _canvasContainer: HTMLDivElement;
     private _interfaceContainer: HTMLDivElement;
+    private _mainEventsHandler: HTMLDivElement;
 
     constructor() {
         this._gameScreen = <HTMLElement>PageBuilder.createElement('section', {
@@ -15,8 +16,13 @@ export default class View {
             classes: 'game-screen__canvas-container',
         });
 
+        this._mainEventsHandler = <HTMLDivElement>PageBuilder.createElement('div', {
+            classes: 'game-screen__events-handler-main',
+        });
+
         this._interfaceContainer = <HTMLDivElement>PageBuilder.createElement('div', {
             classes: 'game-screen__interface-container',
+            content: [this._mainEventsHandler],
         });
         this._gameScreen.append(this._canvasContainer, this._interfaceContainer);
     }
@@ -26,6 +32,10 @@ export default class View {
     }
 
     public appendCanvas(canvas: HTMLCanvasElement) {
-        this._canvasContainer?.append(canvas);
+        this._canvasContainer.prepend(canvas);
+    }
+
+    public getMainEventsHandler() {
+        return this._mainEventsHandler;
     }
 }

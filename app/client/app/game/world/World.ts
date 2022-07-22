@@ -4,6 +4,7 @@ import GameScene from './scene/GameScene';
 
 export default class World {
     private _mainScene = new GameScene();
+
     private _assets = new Assets();
 
     public createTestWorld() {
@@ -25,4 +26,12 @@ export default class World {
     public tickLoop = (time: number): void => {
         return;
     };
+
+    public addObject(point: { x: number; y: number; z: number }) {
+        this._mainScene.addBox(point);
+    }
+
+    get hitboxes() {
+        return this._mainScene.hitboxes;
+    }
 }
