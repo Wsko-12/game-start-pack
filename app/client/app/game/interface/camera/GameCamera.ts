@@ -32,4 +32,9 @@ export default class GameCamera {
             this._controller.setEventHandler(element);
         }
     }
+
+    public setFov(fov: number) {
+        this._camera.fov = fov;
+        this._camera.updateProjectionMatrix();
+    }
 }

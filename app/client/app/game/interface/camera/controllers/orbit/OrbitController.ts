@@ -234,6 +234,11 @@ export default class OrbitController extends CameraController {
             setBlockRect: (x: number, y: number, width: number, height: number): void => {
                 this.setBlockRect(x, y, width, height);
             },
+            setFov: (fov: number) => {
+                this._camera.fov = fov;
+                this._camera.updateProjectionMatrix();
+            },
+            getCamera: () => this._camera,
         };
     }
 }

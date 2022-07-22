@@ -145,14 +145,14 @@ export default class CameraEventsHandler {
         this.mouseUp = (e: MouseEvent): void => {
             e.preventDefault();
             if (e.button === 0) {
-                if (e.timeStamp - this._mouse.clicked.timestamp < 100 && !this._mouse.clicked.moved) {
+                if (e.timeStamp - this._mouse.clicked.timestamp < 150 && !this._mouse.clicked.moved) {
                     console.log('click');
                 }
                 this._mouse.clicked.flag = false;
                 this._mouse.clicked.moved = false;
             }
             if (e.button === 2) {
-                if (e.timeStamp - this._mouse.context.timestamp < 100 && !this._mouse.context.moved) {
+                if (e.timeStamp - this._mouse.context.timestamp < 150 && !this._mouse.context.moved) {
                     console.log('context click');
                 }
                 this._mouse.context.flag = false;
