@@ -1,4 +1,3 @@
-import { Clock } from 'three';
 import GameInterface from './interface/GameInterface';
 import Loop from './loop/Loop';
 import World from './world/World';
@@ -6,9 +5,9 @@ import World from './world/World';
 export default class GameManager {
     private _world = new World();
     private _interface = new GameInterface();
-    private _clock = new Clock();
     private _loops = {
         paused: false,
+        timestamp: 0,
         render: new Loop(60, (time) => {
             this._interface.renderLoop(time);
         }),
@@ -31,6 +30,7 @@ export default class GameManager {
             this._loops.render.switcher(true);
             this._loops.update.switcher(true);
             this._loops.tick.switcher(true);
+            this._loops.timestamp = Date.now();
             this.loop();
 
             this._world.createTestWorld();
@@ -38,7 +38,9 @@ export default class GameManager {
     }
 
     private loop = (): void => {
-        const delta = this._clock.getDelta();
+        const now = Date.now();
+        const delta = (now - this._loops.timestamp) * 0.001;
+        this._loops.timestamp = now;
         const { render, update, tick } = this._loops;
         render.play(delta);
         update.play(delta);
