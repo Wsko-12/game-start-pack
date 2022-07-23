@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { Point2, Point3, Vector2, Vector3 } from '../../../../../common/geometry/Geometry';
+import { Point2, Point3, Vector2, Vector3 } from '../../../../../utils/geometry/Geometry';
 import CameraController from '../CameraController';
 import CameraEventsHandler from './Handler';
 

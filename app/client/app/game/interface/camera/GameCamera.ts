@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { Point3 } from '../../../common/geometry/Geometry';
+import { Point3 } from '../../../utils/geometry/Geometry';
 import CameraController from './controllers/CameraController';
 import OrbitController from './controllers/orbit/OrbitController';
 

@@ -1,4 +1,4 @@
-import { Point3 } from '../../../../common/geometry/Geometry';
+import { Point3 } from '../../../../utils/geometry/Geometry';
 
 export default abstract class CameraController {
     protected _cameraPosition: Point3;

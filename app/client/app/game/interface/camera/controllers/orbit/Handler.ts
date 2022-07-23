@@ -1,7 +1,7 @@
 import { Vector2 } from 'three';
 import { ECustomEvents } from '../../../../../../../ts/enums';
 import { ICustomMouseEvent } from '../../../../../../../ts/interfaces';
-import { Point2 } from '../../../../../common/geometry/Geometry';
+import { Point2 } from '../../../../../utils/geometry/Geometry';
 import OrbitController from './OrbitController';
 
 export default class CameraEventsHandler {
