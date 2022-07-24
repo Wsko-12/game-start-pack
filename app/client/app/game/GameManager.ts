@@ -56,6 +56,8 @@ export default class GameManager {
 
     private setDevFunctions() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!(globalThis as any).devMode) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!(globalThis as any).$dev) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (globalThis as any).$dev = {};
