@@ -14,4 +14,12 @@ export default class Random {
         this.z = (1664525 * this.z + 1013904223) % 4294967296;
         return this.z / 4294967296;
     }
+
+    public getBetween(min: number, max: number, float = true) {
+        const value = this.get();
+        const delta = max - min;
+        let rand = delta * value;
+        rand = float ? rand : Math.round(rand);
+        return min + rand;
+    }
 }
