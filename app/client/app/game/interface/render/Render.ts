@@ -1,5 +1,7 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import PageBuilder from '../../../common/PageBuilder';
+import PostprocessorManager from './postprocessors/PostprocessorManager';
+
 import './style.scss';
 export default class Render {
     public readonly id: string = Math.random().toString();
@@ -7,6 +9,8 @@ export default class Render {
     private _renderer: WebGLRenderer;
     private _camera: PerspectiveCamera | null = null;
     private _scene: Scene | null = null;
+    private _postprocessorManager: PostprocessorManager;
+
     constructor() {
         this._canvas = <HTMLCanvasElement>PageBuilder.createElement('canvas', {
             id: 'renderer',
@@ -14,7 +18,11 @@ export default class Render {
         });
         this._renderer = new WebGLRenderer({
             canvas: this._canvas,
+            depth: true,
         });
+
+        this._renderer.setClearColor(0x000090);
+        this._postprocessorManager = new PostprocessorManager(this._renderer);
 
         window.addEventListener('resize', () => {
             this.setSize();
@@ -23,10 +31,6 @@ export default class Render {
 
     public resize(): void {
         this.setSize();
-    }
-
-    public setCamera(camera: PerspectiveCamera): void {
-        this._camera = camera;
     }
 
     public setCanvas(canvas: HTMLCanvasElement): void {
@@ -38,13 +42,23 @@ export default class Render {
         return this._canvas;
     }
 
+    public setCamera(camera: PerspectiveCamera): void {
+        this._camera = camera;
+        this._postprocessorManager.setCamera(camera);
+    }
+
     public setScene(scene: Scene) {
         this._scene = scene;
+        this._postprocessorManager.setScene(scene);
     }
 
     public render = (): void => {
         if (this._scene && this._camera) {
-            this._renderer.render(this._scene, this._camera);
+            if (this._postprocessorManager.isDisabled()) {
+                this._renderer.render(this._scene, this._camera);
+            } else {
+                this._postprocessorManager.render();
+            }
         }
     };
 
@@ -63,8 +77,9 @@ export default class Render {
             this._camera.aspect = window.innerWidth / window.innerHeight;
             this._camera.updateProjectionMatrix();
         }
-        // if(this.composer){
-        //     this.composer.setSize(windowWidth, windowHeight);
-        // }
+
+        if (this._postprocessorManager) {
+            this._postprocessorManager.setSize(windowWidth, windowHeight);
+        }
     }
 }
