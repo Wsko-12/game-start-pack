@@ -28,7 +28,7 @@ export default class World {
     };
 
     public addObject(point: { x: number; y: number; z: number }) {
-        this._mainScene.addBox(point);
+        // this._mainScene.addBox(point);
     }
 
     get hitboxes() {

@@ -1,6 +1,6 @@
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { Color, DepthTexture, PerspectiveCamera, Scene, WebGLRenderer, WebGLRenderTarget } from 'three';
 import { Pass } from 'three/examples/jsm/postprocessing/Pass';
 import CartoonOutline from './CartoonOutline/CartoonOutline';
 
@@ -11,9 +11,12 @@ export default class PostprocessorManager {
     private _disabled = false;
     private _renderPass: RenderPass | null = null;
     private _passes: { [key: string]: Pass } = {};
+    private _depthTexture = new DepthTexture(window.innerWidth, window.innerHeight);
 
     constructor(renderer: WebGLRenderer) {
-        this._composer = new EffectComposer(renderer);
+        const target = new WebGLRenderTarget(window.innerWidth, window.innerHeight);
+        target.depthTexture = new DepthTexture(window.innerWidth, window.innerHeight);
+        this._composer = new EffectComposer(renderer, target);
         this.setDevFunctions();
     }
 
@@ -48,7 +51,7 @@ export default class PostprocessorManager {
 
             this._passes.cartoonOutline = new CartoonOutline(
                 {
-                    color: new Color(0x303030),
+                    color: new Color(0x010101),
                     size: 1,
                     difference: 2000,
                 },

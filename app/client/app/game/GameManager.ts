@@ -11,7 +11,7 @@ export default class GameManager {
     private _loops = {
         paused: false,
         timestamp: 0,
-        render: new Loop(60, (time) => {
+        render: new Loop(200, (time) => {
             this._interface.renderLoop(time);
         }),
         update: new Loop(40, (time) => {
@@ -39,6 +39,7 @@ export default class GameManager {
 
             this._world.createTestWorld();
         });
+        this._interface.statsSwitcher(true);
     }
 
     private loop = (): void => {

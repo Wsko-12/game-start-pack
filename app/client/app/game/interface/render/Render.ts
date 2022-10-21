@@ -1,4 +1,14 @@
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import {
+    BasicShadowMap,
+    DepthTexture,
+    PCFSoftShadowMap,
+    PerspectiveCamera,
+    Scene,
+    ShaderChunk,
+    sRGBEncoding,
+    VSMShadowMap,
+    WebGLRenderer,
+} from 'three';
 import PageBuilder from '../../../common/PageBuilder';
 import PostprocessorManager from './postprocessors/PostprocessorManager';
 
@@ -20,10 +30,11 @@ export default class Render {
             canvas: this._canvas,
             depth: true,
         });
+        this._renderer.outputEncoding = sRGBEncoding;
 
-        this._renderer.setClearColor(0x000090);
+        this._renderer.setClearColor(0xade9f0);
         this._postprocessorManager = new PostprocessorManager(this._renderer);
-
+        this.enableShadow();
         window.addEventListener('resize', () => {
             this.setSize();
         });
@@ -31,6 +42,11 @@ export default class Render {
 
     public resize(): void {
         this.setSize();
+    }
+
+    private enableShadow() {
+        this._renderer.shadowMap.enabled = true;
+        this._renderer.shadowMap.type = VSMShadowMap;
     }
 
     public setCanvas(canvas: HTMLCanvasElement): void {

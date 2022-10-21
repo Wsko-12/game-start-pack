@@ -8,11 +8,16 @@ class Textures {
         return this._instance;
     }
 
-    private _loaded: { [key: string]: THREE.Texture } = {};
+    private _loaded: Record<string, THREE.Texture> = {};
     constructor() {
         if (!Textures._instance) Textures._instance = this;
         return Textures._instance;
     }
+
+    get(name: string) {
+        return this._loaded[name];
+    }
+
     load(loading: LoadingPage): Promise<boolean> {
         loading.start(textureAtlas.length);
         return new Promise((res) => {
@@ -24,6 +29,7 @@ class Textures {
                     const path: string = './assets/textures/' + data.folder + '/' + data.file;
                     loader.load(path, (texture) => {
                         texture.flipY = false;
+                        texture.magFilter = THREE.NearestFilter;
                         this._loaded[data.name] = texture;
                         index++;
                         loading.tick(index);

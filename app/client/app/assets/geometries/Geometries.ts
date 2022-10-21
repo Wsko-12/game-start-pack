@@ -10,10 +10,14 @@ class Geometries {
         return this._instance;
     }
 
-    private _loaded: { [key: string]: THREE.BufferGeometry } = {};
+    private _loaded: Record<string, THREE.BufferGeometry> = {};
     constructor() {
         if (!Geometries._instance) Geometries._instance = this;
         return Geometries._instance;
+    }
+
+    get(name: string) {
+        return this._loaded[name];
     }
 
     load(loading: LoadingPage): Promise<boolean> {

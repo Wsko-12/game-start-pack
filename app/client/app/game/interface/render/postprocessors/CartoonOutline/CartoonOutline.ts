@@ -16,8 +16,6 @@ export default class CartoonOutline implements Pass {
     private _scene: Scene | null = null;
     private _camera: PerspectiveCamera | null = null;
 
-    private _target = new WebGLRenderTarget(window.innerWidth, window.innerHeight);
-
     private _material: ShaderMaterial;
 
     private _fsQuad: FullScreenQuad;
@@ -37,13 +35,6 @@ export default class CartoonOutline implements Pass {
     ) {
         this._scene = scene || null;
         this._camera = camera || null;
-
-        const texture = this._target.texture;
-        texture.magFilter = texture.minFilter = NearestFilter;
-        this._target.depthTexture = new DepthTexture(window.innerWidth, window.innerHeight);
-        this._target.depthTexture.format = DepthFormat;
-        this._target.depthTexture.type = UnsignedShortType;
-
         this._material = new ShaderMaterial({
             uniforms: {
                 tDiffuse: { value: null },
@@ -90,7 +81,7 @@ export default class CartoonOutline implements Pass {
                 void main() {
                     vec4 texture = texture2D( tDiffuse, vUv );
                     float depth = 1.0 - readDepth( tDepth, vUv );
-                    // vec3 depthColor = vec3(depth);
+                    vec3 depthColor = vec3(depth);
                     float shift_x = (1.0/(resolution.x*0.5)*0.5) * outlineSize;
                     float shift_y = (1.0/(resolution.y*0.5)*0.5) * outlineSize;
                     float depth_top = 1.0 - readDepth(tDepth, vec2(vUv.x,vUv.y+shift_y));
@@ -117,7 +108,6 @@ export default class CartoonOutline implements Pass {
     }
 
     public setSize(width: number, height: number) {
-        this._target.setSize(width, height);
         this._material.uniforms.resolution.value.x = width;
         this._material.uniforms.resolution.value.y = height;
     }
@@ -146,12 +136,16 @@ export default class CartoonOutline implements Pass {
         return this._material.uniforms.outlineSize.value;
     }
 
-    public render(renderer: WebGLRenderer): void {
+    public render(
+        renderer: WebGLRenderer,
+        writeBuffer: WebGLRenderTarget,
+        readBuffer: WebGLRenderTarget
+        // deltaTime: number,
+        // maskActive: boolean
+    ): void {
         if (this._scene && this._camera && this.enabled) {
-            renderer.setRenderTarget(this._target);
-            renderer.render(this._scene, this._camera);
-            this._material.uniforms.tDepth.value = this._target.depthTexture;
-            this._material.uniforms.tDiffuse.value = this._target.texture;
+            this._material.uniforms.tDepth.value = readBuffer.depthTexture;
+            this._material.uniforms.tDiffuse.value = readBuffer.texture;
             renderer.setRenderTarget(null);
             this._fsQuad.render(renderer);
         }
