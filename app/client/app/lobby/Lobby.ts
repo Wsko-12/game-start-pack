@@ -1,18 +1,13 @@
 import PageBuilder from '../common/PageBuilder';
+import Game from '../game/Game';
+import './lobby.scss';
 
 export default class Lobby {
-    public start(startGameCallback: () => void) {
-        startGameCallback();
-        return;
-        document.body.innerHTML = '';
-        const startBtn = <HTMLButtonElement>PageBuilder.createElement('button');
-        startBtn.innerHTML = 'START';
-        startBtn.style.display = 'fixed';
-        startBtn.style.top = '50%';
-        startBtn.style.left = '50%';
-        startBtn.addEventListener('click', () => {
-            startGameCallback();
-        });
-        document.body.append(startBtn);
+    static init() {
+        const button = PageBuilder.createElement('button', { classes: ['lobby_button'], content: 'Start' });
+        button.addEventListener('click', () => Game.init());
+        const container = PageBuilder.createElement('div', { classes: ['lobby_container'], content: [button] });
+
+        document.getElementById('app')?.append(container);
     }
 }

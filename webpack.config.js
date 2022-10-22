@@ -31,7 +31,7 @@ const base = {
         ],
       },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.js', 'css', 'scss'],
     },
 }
 
@@ -56,11 +56,15 @@ const clientConfig = {
   plugins: [ 
     new CopyPlugin({
       patterns:[{
-        from: path.resolve(__dirname, 'app/client/app/assets/textures/src'),
+        from: path.resolve(__dirname, 'app/client/app/game/assets/textures/src'),
         to: path.resolve(__dirname, 'dist/client/assets/textures'),
       },
       {
-        from: path.resolve(__dirname, 'app/client/app/assets/geometries/src'),
+        from: path.resolve(__dirname, 'app/client/app/game/assets/images/src'),
+        to: path.resolve(__dirname, 'dist/client/assets/images'),
+      },
+      {
+        from: path.resolve(__dirname, 'app/client/app/game/assets/geometries/src'),
         to: path.resolve(__dirname, 'dist/client/assets/geometries'),
       }
     ]

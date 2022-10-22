@@ -1,4 +1,4 @@
-import { AtlasItem } from '../../../../ts/interfaces';
+import { AtlasItem } from '../../../../../ts/interfaces';
 
 const textureAtlas: AtlasItem[] = [
     {

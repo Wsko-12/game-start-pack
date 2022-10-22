@@ -1,15 +1,11 @@
-import GameManager from './game/GameManager';
-import Lobby from './lobby/Lobby';
 import './common.scss';
+import PageBuilder from './common/PageBuilder';
+import Lobby from './lobby/Lobby';
 
 export default class App {
-    private _lobby = new Lobby();
-    private _game = new GameManager();
-
-    public start(): void {
-        this._lobby.start(() => {
-            document.body.innerHTML = '';
-            this._game.start();
-        });
+    static start() {
+        const app = PageBuilder.createElement('div', { id: 'app' });
+        document.body.append(app);
+        Lobby.init();
     }
 }
