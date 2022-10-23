@@ -1,11 +1,11 @@
 import { WebGLRenderer } from 'three';
+import LoopsManager from '../loopsManager/LoopsManager';
 import GameUI from '../ui/GameUI';
 import World from '../world/World';
 import GameCamera from './gameCamera/GameCamera';
 
 export default class Renderer {
     private static renderer: WebGLRenderer | null = null;
-    private static camera: GameCamera | null = null;
 
     static init() {
         const canvas = GameUI.getCanvas();
@@ -20,11 +20,10 @@ export default class Renderer {
 
         window.addEventListener('resize', this.setSize);
         this.setSize();
-        this.render();
+        LoopsManager.subscribe('render', this.render);
     }
 
     private static setSize = () => {
-        console.log('resize');
         const windowPixelRatio = 1;
         const windowWidth = +window.innerWidth * windowPixelRatio;
         const windowHeight = +window.innerHeight * windowPixelRatio;
@@ -59,7 +58,7 @@ export default class Renderer {
         this.renderer?.dispose();
     }
 
-    static render() {
+    static render = () => {
         this.renderer?.render(World.getScene(), GameCamera.getCamera());
-    }
+    };
 }
