@@ -9,7 +9,7 @@ export default class Renderer {
 
     static init() {
         const canvas = GameUI.getCanvas();
-        GameCamera.init();
+        GameCamera.init(canvas);
 
         const renderer = new WebGLRenderer({
             canvas,
