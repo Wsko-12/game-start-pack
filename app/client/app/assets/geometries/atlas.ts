@@ -8,9 +8,15 @@ const geometriesAtlas: AtlasItem[] = [
     },
 
     {
-        name: 'grass',
+        name: 'grass2',
         folder: 'grass/',
         file: 'grass.glb',
+    },
+
+    {
+        name: 'grass',
+        folder: 'grass/',
+        file: 'grass2.glb',
     },
 ];
 

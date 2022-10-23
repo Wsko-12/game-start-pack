@@ -8,6 +8,12 @@ const textureAtlas: AtlasItem[] = [
     },
 
     {
+        name: 'grass',
+        folder: '',
+        file: 'grass.png',
+    },
+
+    {
         name: 'grassAlphaMap',
         folder: '',
         file: 'grassAlphaMap.png',

@@ -1,14 +1,4 @@
-import {
-    BasicShadowMap,
-    DepthTexture,
-    PCFSoftShadowMap,
-    PerspectiveCamera,
-    Scene,
-    ShaderChunk,
-    sRGBEncoding,
-    VSMShadowMap,
-    WebGLRenderer,
-} from 'three';
+import { LinearEncoding, PerspectiveCamera, Scene, VSMShadowMap, WebGLRenderer } from 'three';
 import PageBuilder from '../../../common/PageBuilder';
 import PostprocessorManager from './postprocessors/PostprocessorManager';
 
@@ -30,9 +20,9 @@ export default class Render {
             canvas: this._canvas,
             depth: true,
         });
-        this._renderer.outputEncoding = sRGBEncoding;
+        this._renderer.outputEncoding = LinearEncoding;
 
-        this._renderer.setClearColor(0xade9f0);
+        this._renderer.setClearColor(0xeba2a2);
         this._postprocessorManager = new PostprocessorManager(this._renderer);
         this.enableShadow();
         window.addEventListener('resize', () => {

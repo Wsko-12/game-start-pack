@@ -20,6 +20,7 @@ export default class World {
     }
 
     public updateLoop = (time: number): void => {
+        this._mainScene.update(time);
         return;
     };
 
