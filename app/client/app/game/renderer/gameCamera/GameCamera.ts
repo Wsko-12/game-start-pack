@@ -17,7 +17,7 @@ export default class GameCamera {
         this.position = new Point3(0, 0, 0);
         this.target = new Point3(0, 0, 0);
 
-        this.controller = new CameraOrbitController(mouseEventsHandler, this.position, this.target);
+        this.controller = new CameraOrbitController(mouseEventsHandler, this.position, this.target, this.camera);
 
         LoopsManager.subscribe('update', this.update);
     }
