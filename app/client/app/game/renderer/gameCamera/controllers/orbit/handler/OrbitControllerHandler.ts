@@ -13,9 +13,9 @@ export default class OrbitControllerHandler {
         return event;
     }
 
-    private _controller: CameraOrbitController;
-    private _time = 0;
-    private _mouse = {
+    private controller: CameraOrbitController;
+    private time = 0;
+    private mouse = {
         x: 0,
         y: 0,
         clicked: {
@@ -34,7 +34,7 @@ export default class OrbitControllerHandler {
         },
     };
 
-    private _touch = {
+    private touch = {
         x: 0,
         y: 0,
         x2: 0,
@@ -45,7 +45,7 @@ export default class OrbitControllerHandler {
         timestamp: 0,
     };
 
-    private _eventHandler: HTMLElement | null = null;
+    private eventHandler: HTMLElement | null = null;
 
     private contextmenu: (e: MouseEvent) => boolean;
     private wheel: (e: WheelEvent) => void;
@@ -59,7 +59,7 @@ export default class OrbitControllerHandler {
     private touchEnd: (e: TouchEvent) => void;
 
     constructor(controller: CameraOrbitController) {
-        this._controller = controller;
+        this.controller = controller;
 
         this.contextmenu = (e: MouseEvent): boolean => {
             e.preventDefault();
@@ -73,158 +73,155 @@ export default class OrbitControllerHandler {
                 if (deltaY % 1 === 0) {
                     if (deltaY === 100 || deltaY === -100) {
                         if (deltaY > 0) {
-                            this._controller.zoom.delta += 0.1 * this._controller.speed;
+                            this.controller.zoom.delta += 0.1 * this.controller.speed;
                         } else {
-                            this._controller.zoom.delta -= 0.1 * this._controller.speed;
+                            this.controller.zoom.delta -= 0.1 * this.controller.speed;
                         }
                     } else {
-                        this._controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
+                        this.controller.targetDirection.deltaY += (-e.deltaY / window.innerHeight) * 0.25;
                     }
                 } else {
                     //pitch
-                    this._controller.zoom.delta += deltaY * this._controller.speed * 0.01;
+                    this.controller.zoom.delta += deltaY * this.controller.speed * 0.01;
                 }
             }
 
             if (deltaX !== 0) {
-                this._controller.targetDirection.deltaX += (-e.deltaX / window.innerWidth) * 0.25;
+                this.controller.targetDirection.deltaX += (-e.deltaX / window.innerWidth) * 0.25;
             }
         };
 
         this.mouseDown = (e: MouseEvent): void => {
             e.preventDefault();
             if (e.button === 0) {
-                this._mouse.clicked.x = e.clientX;
-                this._mouse.clicked.y = e.clientY;
-                this._mouse.clicked.flag = true;
-                this._mouse.clicked.timestamp = e.timeStamp;
+                this.mouse.clicked.x = e.clientX;
+                this.mouse.clicked.y = e.clientY;
+                this.mouse.clicked.flag = true;
+                this.mouse.clicked.timestamp = e.timeStamp;
             }
             if (e.button === 2) {
-                this._mouse.context.x = e.clientX;
-                this._mouse.context.y = e.clientY;
-                this._mouse.context.flag = true;
-                this._mouse.context.timestamp = e.timeStamp;
+                this.mouse.context.x = e.clientX;
+                this.mouse.context.y = e.clientY;
+                this.mouse.context.flag = true;
+                this.mouse.context.timestamp = e.timeStamp;
             }
         };
 
         this.mouseMove = (e: MouseEvent): void => {
             e.preventDefault();
-            this._mouse.x = e.clientX;
-            this._mouse.y = e.clientY;
+            this.mouse.x = e.clientX;
+            this.mouse.y = e.clientY;
             const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.mouseMove', [e.clientX, e.clientY]);
-            this._eventHandler?.dispatchEvent(event);
+            this.eventHandler?.dispatchEvent(event);
 
-            if (this._mouse.clicked.flag) {
-                let deltaX = e.clientX - this._mouse.clicked.x;
-                let deltaY = e.clientY - this._mouse.clicked.y;
+            if (this.mouse.clicked.flag) {
+                let deltaX = e.clientX - this.mouse.clicked.x;
+                let deltaY = e.clientY - this.mouse.clicked.y;
 
-                this._mouse.clicked.x = e.clientX;
-                this._mouse.clicked.y = e.clientY;
+                this.mouse.clicked.x = e.clientX;
+                this.mouse.clicked.y = e.clientY;
 
                 if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-                    this._mouse.clicked.moved = true;
+                    this.mouse.clicked.moved = true;
                 }
 
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.targetDirection.deltaX = deltaX * this._controller.speed;
-                this._controller.targetDirection.deltaY = deltaY * this._controller.speed;
+                this.controller.targetDirection.deltaX = deltaX * this.controller.speed;
+                this.controller.targetDirection.deltaY = deltaY * this.controller.speed;
             }
 
-            if (this._mouse.context.flag) {
-                this._mouse.context.moved = true;
+            if (this.mouse.context.flag) {
+                this.mouse.context.moved = true;
 
-                let deltaX = e.clientX - this._mouse.context.x;
-                let deltaY = e.clientY - this._mouse.context.y;
+                let deltaX = e.clientX - this.mouse.context.x;
+                let deltaY = e.clientY - this.mouse.context.y;
 
-                this._mouse.context.x = e.clientX;
-                this._mouse.context.y = e.clientY;
+                this.mouse.context.x = e.clientX;
+                this.mouse.context.y = e.clientY;
 
                 if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-                    this._mouse.context.moved = true;
+                    this.mouse.context.moved = true;
                 }
 
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
-                this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
+                this.controller.cameraAngles.deltaAlpha += deltaX * this.controller.speed;
+                this.controller.cameraAngles.deltaTetha += deltaY * this.controller.speed;
             }
         };
 
         this.mouseUp = (e: MouseEvent): void => {
             e.preventDefault();
             if (e.button === 0) {
-                if (e.timeStamp - this._mouse.clicked.timestamp < 150 && !this._mouse.clicked.moved) {
+                if (e.timeStamp - this.mouse.clicked.timestamp < 150 && !this.mouse.clicked.moved) {
                     const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.click', [
                         e.clientX,
                         e.clientY,
                     ]);
-                    this._eventHandler?.dispatchEvent(event);
+                    this.eventHandler?.dispatchEvent(event);
                 }
-                this._mouse.clicked.flag = false;
-                this._mouse.clicked.moved = false;
+                this.mouse.clicked.flag = false;
+                this.mouse.clicked.moved = false;
             }
             if (e.button === 2) {
-                if (e.timeStamp - this._mouse.context.timestamp < 150 && !this._mouse.context.moved) {
+                if (e.timeStamp - this.mouse.context.timestamp < 150 && !this.mouse.context.moved) {
                     console.log('context click');
                 }
-                this._mouse.context.flag = false;
-                this._mouse.context.moved = false;
+                this.mouse.context.flag = false;
+                this.mouse.context.moved = false;
             }
             if (e.type === 'mouseleave') {
-                this._mouse.clicked.flag = false;
-                this._mouse.context.flag = false;
+                this.mouse.clicked.flag = false;
+                this.mouse.context.flag = false;
             }
         };
 
         this.touchStart = (e: TouchEvent): void => {
             e.preventDefault();
-            this._touch.timestamp = e.timeStamp;
-            this._touch.x = e.touches[0].clientX;
-            this._touch.y = e.touches[0].clientY;
+            this.touch.timestamp = e.timeStamp;
+            this.touch.x = e.touches[0].clientX;
+            this.touch.y = e.touches[0].clientY;
             if (e.touches.length === 1) {
-                this._touch.clicked = true;
-                this._touch.double = false;
+                this.touch.clicked = true;
+                this.touch.double = false;
             }
             if (e.touches.length > 1) {
-                this._touch.clicked = false;
-                this._touch.double = true;
-                this._touch.x2 = e.touches[1].clientX;
-                this._touch.y2 = e.touches[1].clientY;
+                this.touch.clicked = false;
+                this.touch.double = true;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
             }
         };
 
         this.touchMove = (e: TouchEvent): void => {
             e.preventDefault();
 
-            if (this._touch.clicked) {
-                let deltaX = e.touches[0].clientX - this._touch.x;
-                let deltaY = e.touches[0].clientY - this._touch.y;
+            if (this.touch.clicked) {
+                let deltaX = e.touches[0].clientX - this.touch.x;
+                let deltaY = e.touches[0].clientY - this.touch.y;
 
-                this._touch.x = e.touches[0].clientX;
-                this._touch.y = e.touches[0].clientY;
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
 
                 if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-                    this._touch.moved = true;
+                    this.touch.moved = true;
                 }
 
                 deltaX /= window.innerWidth;
                 deltaY /= window.innerHeight;
 
-                this._controller.targetDirection.deltaX = deltaX * this._controller.speed;
-                this._controller.targetDirection.deltaY = deltaY * this._controller.speed;
+                this.controller.targetDirection.deltaX = deltaX * this.controller.speed;
+                this.controller.targetDirection.deltaY = deltaY * this.controller.speed;
             }
-            if (this._touch.double) {
-                const vectorA = new Vector2(e.touches[0].clientX - this._touch.x, e.touches[0].clientY - this._touch.y);
-                const vectorB = new Vector2(
-                    e.touches[1].clientX - this._touch.x2,
-                    e.touches[1].clientY - this._touch.y2
-                );
+            if (this.touch.double) {
+                const vectorA = new Vector2(e.touches[0].clientX - this.touch.x, e.touches[0].clientY - this.touch.y);
+                const vectorB = new Vector2(e.touches[1].clientX - this.touch.x2, e.touches[1].clientY - this.touch.y2);
 
                 if (vectorA.getLength() > 10 || vectorB.getLength() > 10) {
-                    this._touch.moved = true;
+                    this.touch.moved = true;
                 }
 
                 vectorA.normalize();
@@ -233,103 +230,103 @@ export default class OrbitControllerHandler {
                 const dot = vectorA.dot(vectorB);
                 if (dot < 0.75) {
                     //pitch
-                    const pointABefore = new Point2(this._touch.x, this._touch.y);
+                    const pointABefore = new Point2(this.touch.x, this.touch.y);
                     const pointAAfter = new Point2(e.touches[0].clientX, e.touches[0].clientY);
 
-                    const pointBBefore = new Point2(this._touch.x2, this._touch.y2);
+                    const pointBBefore = new Point2(this.touch.x2, this.touch.y2);
                     const pointBAfter = new Point2(e.touches[1].clientX, e.touches[1].clientY);
 
                     const distanceBefore = pointABefore.getDistanceTo(pointBBefore);
                     const distanceAfter = pointAAfter.getDistanceTo(pointBAfter);
 
                     const delta = distanceAfter - distanceBefore;
-                    this._controller.zoom.delta += -delta / Math.max(window.innerWidth, window.innerHeight);
+                    this.controller.zoom.delta += -delta / Math.max(window.innerWidth, window.innerHeight);
                 } else {
-                    let deltaX = (e.touches[1].clientX - this._touch.x2) | (e.touches[0].clientX - this._touch.x);
-                    let deltaY = (e.touches[1].clientY - this._touch.y2) | (e.touches[0].clientY - this._touch.y);
+                    let deltaX = (e.touches[1].clientX - this.touch.x2) | (e.touches[0].clientX - this.touch.x);
+                    let deltaY = (e.touches[1].clientY - this.touch.y2) | (e.touches[0].clientY - this.touch.y);
 
                     deltaX /= window.innerWidth;
                     deltaY /= window.innerHeight;
 
-                    this._controller.cameraAngles.deltaAlpha += deltaX * this._controller.speed;
-                    this._controller.cameraAngles.deltaTetha += deltaY * this._controller.speed;
+                    this.controller.cameraAngles.deltaAlpha += deltaX * this.controller.speed;
+                    this.controller.cameraAngles.deltaTetha += deltaY * this.controller.speed;
                 }
 
-                this._touch.x = e.touches[0].clientX;
-                this._touch.y = e.touches[0].clientY;
-                this._touch.x2 = e.touches[1].clientX;
-                this._touch.y2 = e.touches[1].clientY;
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
             }
         };
 
         this.touchEnd = (e: TouchEvent): void => {
             e.preventDefault();
             if (e.touches.length === 0) {
-                if (e.timeStamp - this._touch.timestamp < 200 && !this._touch.moved) {
-                    if (this._touch.clicked) {
+                if (e.timeStamp - this.touch.timestamp < 200 && !this.touch.moved) {
+                    if (this.touch.clicked) {
                         const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.click', [
-                            this._touch.x,
-                            this._touch.y,
+                            this.touch.x,
+                            this.touch.y,
                         ]);
-                        this._eventHandler?.dispatchEvent(event);
+                        this.eventHandler?.dispatchEvent(event);
                     }
-                    if (this._touch.double) {
+                    if (this.touch.double) {
                         //don't use it better
                         console.log('context click');
                     }
                 }
 
-                this._touch.clicked = false;
-                this._touch.double = false;
-                this._touch.moved = false;
+                this.touch.clicked = false;
+                this.touch.double = false;
+                this.touch.moved = false;
             } else if (e.touches.length === 1) {
-                this._touch.x = e.touches[0].clientX;
-                this._touch.y = e.touches[0].clientY;
-                this._touch.clicked = true;
-                this._touch.double = false;
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.clicked = true;
+                this.touch.double = false;
             } else {
-                this._touch.clicked = false;
-                this._touch.double = true;
-                this._touch.x = e.touches[0].clientX;
-                this._touch.y = e.touches[0].clientY;
-                this._touch.x2 = e.touches[1].clientX;
-                this._touch.y2 = e.touches[1].clientY;
+                this.touch.clicked = false;
+                this.touch.double = true;
+                this.touch.x = e.touches[0].clientX;
+                this.touch.y = e.touches[0].clientY;
+                this.touch.x2 = e.touches[1].clientX;
+                this.touch.y2 = e.touches[1].clientY;
             }
         };
     }
 
     attach(element: HTMLElement): void {
-        this._eventHandler = element;
-        this._eventHandler.addEventListener('contextmenu', this.contextmenu);
-        this._eventHandler.addEventListener('wheel', this.wheel);
+        this.eventHandler = element;
+        this.eventHandler.addEventListener('contextmenu', this.contextmenu);
+        this.eventHandler.addEventListener('wheel', this.wheel);
 
-        this._eventHandler.addEventListener('mousedown', this.mouseDown);
-        this._eventHandler.addEventListener('mousemove', this.mouseMove);
-        this._eventHandler.addEventListener('mouseup', this.mouseUp);
-        this._eventHandler.addEventListener('mouseleave', this.mouseUp);
+        this.eventHandler.addEventListener('mousedown', this.mouseDown);
+        this.eventHandler.addEventListener('mousemove', this.mouseMove);
+        this.eventHandler.addEventListener('mouseup', this.mouseUp);
+        this.eventHandler.addEventListener('mouseleave', this.mouseUp);
 
-        this._eventHandler.addEventListener('touchmove', this.touchMove);
-        this._eventHandler.addEventListener('touchstart', this.touchStart);
-        this._eventHandler.addEventListener('touchend', this.touchEnd);
+        this.eventHandler.addEventListener('touchmove', this.touchMove);
+        this.eventHandler.addEventListener('touchstart', this.touchStart);
+        this.eventHandler.addEventListener('touchend', this.touchEnd);
     }
 
     detach(): void {
-        if (this._eventHandler) {
-            this._eventHandler.removeEventListener('contextmenu', this.contextmenu);
-            this._eventHandler.removeEventListener('wheel', this.wheel);
+        if (this.eventHandler) {
+            this.eventHandler.removeEventListener('contextmenu', this.contextmenu);
+            this.eventHandler.removeEventListener('wheel', this.wheel);
 
-            this._eventHandler.removeEventListener('mousedown', this.mouseDown);
-            this._eventHandler.removeEventListener('mousemove', this.mouseMove);
-            this._eventHandler.removeEventListener('mouseup', this.mouseUp);
-            this._eventHandler.removeEventListener('mouseleave', this.mouseUp);
+            this.eventHandler.removeEventListener('mousedown', this.mouseDown);
+            this.eventHandler.removeEventListener('mousemove', this.mouseMove);
+            this.eventHandler.removeEventListener('mouseup', this.mouseUp);
+            this.eventHandler.removeEventListener('mouseleave', this.mouseUp);
 
-            this._eventHandler.removeEventListener('touchmove', this.touchMove);
-            this._eventHandler.removeEventListener('touchstart', this.touchStart);
-            this._eventHandler.removeEventListener('touchend', this.touchEnd);
+            this.eventHandler.removeEventListener('touchmove', this.touchMove);
+            this.eventHandler.removeEventListener('touchstart', this.touchStart);
+            this.eventHandler.removeEventListener('touchend', this.touchEnd);
         }
     }
 
     update(time: number) {
-        this._time = time;
+        this.time = time;
     }
 }
