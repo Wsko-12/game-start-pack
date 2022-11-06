@@ -13,5 +13,8 @@ export default class Lobby {
         });
 
         document.getElementById('app')?.append(container);
+
+        container.remove();
+        Game.init();
     }
 }

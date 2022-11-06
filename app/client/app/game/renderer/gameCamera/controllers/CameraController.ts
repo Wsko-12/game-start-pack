@@ -1,13 +1,12 @@
 import { Point3 } from '../../../../utils/Geometry';
 
 export default abstract class CameraController {
-    protected position: Point3;
-    protected target: Point3;
+    protected _cameraPosition: Point3;
+    protected _targetPosition: Point3;
 
     constructor(handlerElement: HTMLElement, position: Point3, target: Point3) {
-        this.position = position;
-        this.target = target;
-        this.setEventHandler(handlerElement);
+        this._cameraPosition = position;
+        this._targetPosition = target;
     }
 
     public abstract update(time: number): void;

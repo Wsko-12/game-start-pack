@@ -111,7 +111,7 @@ export default class OrbitControllerHandler {
             e.preventDefault();
             this._mouse.x = e.clientX;
             this._mouse.y = e.clientY;
-            const event = OrbitControllerHandler.createPointerEvent('customMousemove', [e.clientX, e.clientY]);
+            const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.mouseMove', [e.clientX, e.clientY]);
             this._eventHandler?.dispatchEvent(event);
 
             if (this._mouse.clicked.flag) {
@@ -157,7 +157,10 @@ export default class OrbitControllerHandler {
             e.preventDefault();
             if (e.button === 0) {
                 if (e.timeStamp - this._mouse.clicked.timestamp < 150 && !this._mouse.clicked.moved) {
-                    const event = OrbitControllerHandler.createPointerEvent('customClick', [e.clientX, e.clientY]);
+                    const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.click', [
+                        e.clientX,
+                        e.clientY,
+                    ]);
                     this._eventHandler?.dispatchEvent(event);
                 }
                 this._mouse.clicked.flag = false;
@@ -264,7 +267,7 @@ export default class OrbitControllerHandler {
             if (e.touches.length === 0) {
                 if (e.timeStamp - this._touch.timestamp < 200 && !this._touch.moved) {
                     if (this._touch.clicked) {
-                        const event = OrbitControllerHandler.createPointerEvent('customClick', [
+                        const event = OrbitControllerHandler.createPointerEvent('ECustomEvents.click', [
                             this._touch.x,
                             this._touch.y,
                         ]);
