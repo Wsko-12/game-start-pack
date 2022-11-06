@@ -6,6 +6,7 @@ export default class Loop {
     private subscribers: TLoopCallback[] = [];
     private frame = 0;
     private timestamp = 0;
+    private paused = false;
 
     constructor(fps: number, callback?: TLoopCallback) {
         this.fps = fps;
@@ -21,7 +22,14 @@ export default class Loop {
         this.fps = fps;
     }
 
+    public pause(value: boolean) {
+        this.paused = value;
+    }
+
     public play(delta: number) {
+        if (this.paused) {
+            return;
+        }
         this.timestamp += delta;
         if (this.timestamp > this.oneFrameTime) {
             this.frame++;
